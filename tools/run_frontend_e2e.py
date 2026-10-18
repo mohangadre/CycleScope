@@ -59,6 +59,8 @@ def main() -> int:
         "CYCLESCOPE_API_URL": "http://127.0.0.1:8011",
         "PLAYWRIGHT_BASE_URL": "http://127.0.0.1:3001",
         "NEXT_TELEMETRY_DISABLED": "1",
+        "CYCLESCOPE_DEFAULT_AS_OF": "2024-03-28",
+        "CYCLESCOPE_DEFAULT_START": "2022-04-04",
     }
     for key in ("APCA_API_KEY_ID", "APCA_API_SECRET_KEY"):
         environment.pop(key, None)

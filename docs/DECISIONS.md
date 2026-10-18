@@ -225,3 +225,26 @@ metadata needed by the response, while preserving prices and source fields.
 Existing PostgreSQL/API/browser tests validate compatibility; before/after raw
 HTTP timings are retained in [performance notes](PERFORMANCE.md). This is a
 measured query correction, not an added caching or background-job architecture.
+
+## Explicit real-data startup
+
+Keep the offline fixture demo explicit and provide `tools/local_alpaca.sh` for
+normal Alpaca use. The latter forces the real provider, checks credential presence
+without printing values, ingests all 12 supported instruments, and verifies the
+served feed and final session before announcing success. It never substitutes
+invented prices. Keys must be configured separately on each computer; Codex's
+network-secret bindings do not transfer to a Mac checkout.
+
+Default ingestion stops at the exchange session on/before yesterday in New York,
+conservatively excluding a current-day partial bar. Re-running explicitly refreshes
+the stored daily data. The cloud helper's `--cloud` path uses the host's supported
+proxy-backed ingestion context; ordinary Docker Desktop uses container ingestion.
+Strict gap validation remains unchanged.
+
+The helper supplies public start/end defaults to the web container. Next renders
+the two pages dynamically so those values are read at startup/request time rather
+than frozen into a build. Components apply them only to real-provider controls;
+offline fixtures keep their own covered dates. The default analysis range is 720
+actual exchange sessions, compatible with the bounded 480/20 backtest. These are
+initial controls, not an assertion of data freshness between explicit refreshes.
+No credentials are supplied to the browser and no live quote stream is claimed.

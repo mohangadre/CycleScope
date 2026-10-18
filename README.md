@@ -38,7 +38,65 @@ Code lives in `src/cyclescope`: `domain`, `providers`, `services`, `storage`, `a
 and `analytics`. Numerical functions have no provider/database I/O. Read
 [engineering decisions](docs/DECISIONS.md) for boundaries and operational choices.
 
-## Quick offline demo
+## Run with real Alpaca prices
+
+For your own market-data research, use the real-data startup command below.
+The separate `local_demo.sh` command deliberately uses invented offline fixtures.
+
+Docker Desktop must be running. On your computer, create `.env` only if it does
+not already exist, and open it in your editor (on macOS):
+
+```sh
+test -f .env || cp .env.example .env
+open -e .env
+```
+
+Set these fields in that local file, using your own Alpaca credentials:
+
+```dotenv
+MARKET_DATA_PROVIDER=alpaca
+APCA_API_KEY_ID=your_key_id
+APCA_API_SECRET_KEY=your_secret_key
+ALPACA_FEED=iex
+```
+
+Use `sip` only if your account has the required entitlement. Keep `.env` private;
+it is ignored by Git. Credentials saved in Codex's environment do not automatically
+appear on your Mac. Do not send key values in chat. Then run:
+
+```sh
+bash tools/local_alpaca.sh
+```
+
+This builds the images, checks for local credentials, migrates, downloads all 12
+instruments from Alpaca, and verifies that the API serves real data from the chosen
+feed. It never seeds or falls back to synthetic prices. Default history starts
+2023-01-03 and ends on the last exchange session before today's New York date,
+conservatively excluding a potentially incomplete current-day bar. It prints the
+actual cutoff and passes it to the running web server. Reload the page: the real-
+data dashboard End date and sector cutoff default to that ingested session.
+The default chart/evaluation range uses the trailing 720 exchange sessions (or
+the requested start if later), fitting the bounded default backtest configuration.
+Ordinary startup without this setting retains the historical example date.
+
+Subsequent refreshes can reuse built images:
+
+```sh
+bash tools/local_alpaca.sh --no-build
+```
+
+Optional `CYCLESCOPE_INGEST_START` / `CYCLESCOPE_INGEST_END` environment variables
+select another covered interval. Missing sessions or unavailable feeds stop with
+an error instead of inventing data. Multi-symbol ingestion is atomic per symbol;
+earlier successful symbols remain if a later symbol fails. The cloud runner can
+use `--cloud` for its trusted proxy build.
+
+These are **real adjusted historical daily prices**, not continuously updating
+quotes. IEX represents a single exchange's feed and can differ from consolidated
+SIP prices; adjusted history can also differ from raw quote prices. Refresh is
+explicit. Streaming quotes and automatic intraday updates are not implemented.
+
+## Offline demonstration with synthetic prices
 
 With Docker Engine and Compose v2 installed, run from this checkout:
 
@@ -397,7 +455,7 @@ The model still lost on real data. Errors are natural-log price; details and MAE
 in [methodology](docs/METHODOLOGY.md). Passing software tests does not establish
 financial usefulness.
 
-Current frontend validation: **21 unit tests and 12 Chromium browser tests passed**,
+Current frontend validation: **21 unit tests and 13 Chromium browser tests passed**,
 including actual API metrics, cycle/forecast and sector charts, saved replay, loading,
 cancellation, empty/error/invalid-date states, and mobile overflow/keyboard checks.
 Strict TypeScript, frontend lint/format, API regeneration, and production build

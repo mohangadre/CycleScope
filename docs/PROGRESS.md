@@ -161,3 +161,30 @@ P0 acceptance is demonstrated locally. Public hosting is optional under Week 4's
 local-demo alternative. P1 enhancements remain separate work: calibrated uncertainty,
 stronger baselines, significance/event scoring, queues/caching when justified,
 and hosting with operational/authentication controls.
+
+## Real-data startup correction
+
+The original `local_demo.sh` instructions intentionally started invented fixtures;
+they were insufficient for a user expecting real Alpaca prices. Added a separately
+named, explicit real-data startup/refresh command with secure local key setup in
+README. It ingests all 12 supported instruments, fails rather than falling back,
+and verifies real feed/final-session coverage. The latest-day calculation uses
+the locked exchange calendar and excludes today's potentially incomplete bar.
+
+The real workflow was exercised through 2026-10-16 on IEX for all 12 instruments,
+including QQQ/NVDA/MU. This supersedes the earlier milestone's limited live-symbol
+verification. It does not establish SIP entitlement or streaming quote support.
+The cloud runtime requires host ingestion through its supported proxy; the
+`--cloud` command handles that, while Docker Desktop uses container ingestion.
+
+The web server receives the actual ingestion cutoff and trailing 720-session
+start date at runtime. Real-source controls now open on that range rather than
+the old 2025 example. Synthetic examples keep their original fixture dates. Added
+a browser regression for runtime real-source controls without mocking prices.
+Historical data, model mathematics and negative evaluation results are preserved.
+
+Validation after the startup correction: frontend lint/format, strict types,
+production host/container builds, 21 unit tests and 13 Chromium tests passed.
+Missing local credentials were checked to fail explicitly before ingestion.
+Python production numerical/API code is unchanged by this correction; the prior
+215-test backend regression evidence remains applicable.

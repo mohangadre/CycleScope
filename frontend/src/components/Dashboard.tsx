@@ -42,7 +42,7 @@ const initialSelection: Selection = {
   mode: "expanding",
 };
 
-function defaults(provider: string): Selection {
+function defaults(provider: string, defaultAsOf?: string, defaultStart?: string): Selection {
   if (provider === "synthetic-research-v1")
     return { ...initialSelection, start: "2020-01-02", end: "2022-11-08" };
   if (provider === "synthetic-v1")
@@ -54,7 +54,11 @@ function defaults(provider: string): Selection {
       initial: 40,
       horizon: 10,
     };
-  return initialSelection;
+  return {
+    ...initialSelection,
+    start: defaultStart ?? initialSelection.start,
+    end: defaultAsOf ?? initialSelection.end,
+  };
 }
 
 const dollars = new Intl.NumberFormat("en-US", {
@@ -100,7 +104,13 @@ function SourceBadge({ kind }: { kind: "real" | "synthetic" }) {
   );
 }
 
-export function Dashboard() {
+export function Dashboard({
+  defaultAsOf,
+  defaultStart,
+}: {
+  defaultAsOf?: string;
+  defaultStart?: string;
+}) {
   const [catalog, setCatalog] = useState<SymbolsResponse | null>(null);
   const [catalogError, setCatalogError] = useState<ReturnType<typeof errorDetails> | null>(null);
   const [catalogAttempt, setCatalogAttempt] = useState(0);
@@ -125,13 +135,13 @@ export function Dashboard() {
         if (controller.signal.aborted) return;
         setCatalog(symbols);
         setCatalogError(null);
-        setSelection(defaults(symbols.provider));
+        setSelection(defaults(symbols.provider, defaultAsOf, defaultStart));
       })
       .catch((cause: unknown) => {
         if (!controller.signal.aborted) setCatalogError(errorDetails(cause));
       });
     return () => controller.abort();
-  }, [catalogAttempt]);
+  }, [catalogAttempt, defaultAsOf, defaultStart]);
 
   useEffect(() => () => active.current?.abort(), []);
 

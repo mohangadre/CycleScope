@@ -37,6 +37,8 @@ services:
     build: ./frontend
     environment:
       CYCLESCOPE_API_URL: http://api:8000
+      CYCLESCOPE_DEFAULT_AS_OF: ${CYCLESCOPE_DEFAULT_AS_OF:-}
+      CYCLESCOPE_DEFAULT_START: ${CYCLESCOPE_DEFAULT_START:-}
       PORT: "3000"
       HOSTNAME: 0.0.0.0
     ports:

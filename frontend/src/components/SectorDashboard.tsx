@@ -6,7 +6,7 @@ import { api, ApiError, type SectorResponse, type SymbolsResponse } from "@/lib/
 import { SectorHistoryChart, SectorRotationChart, sectorColors } from "./charts/SectorCharts";
 import { isSessionDate } from "./charts/data";
 
-export function SectorDashboard() {
+export function SectorDashboard({ defaultAsOf }: { defaultAsOf?: string }) {
   const [catalog, setCatalog] = useState<SymbolsResponse | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [cutoff, setCutoff] = useState("2025-12-31");
@@ -34,7 +34,7 @@ export function SectorDashboard() {
             ? "2022-11-08"
             : value.provider === "synthetic-v1"
               ? "2024-03-28"
-              : "2025-12-31",
+              : (defaultAsOf ?? "2025-12-31"),
         );
       })
       .catch((cause: unknown) => {
@@ -46,7 +46,7 @@ export function SectorDashboard() {
           );
       });
     return () => controller.abort();
-  }, [attempt]);
+  }, [attempt, defaultAsOf]);
   useEffect(() => () => request.current?.abort(), []);
 
   function invalidate() {
