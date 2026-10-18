@@ -10,6 +10,7 @@ import {
   type FFTConfig,
   type ForecastAnalysis,
   type PriceHistory,
+  type PriceCoverageResponse,
   type SymbolsResponse,
 } from "@/lib/api";
 import { ForecastChart, HistoricalPriceChart, SpectrumChart } from "./charts";
@@ -71,7 +72,7 @@ function errorDetails(error: unknown): { message: string; id?: string | null } {
   return { message: "The request could not be completed. Please retry." };
 }
 
-function validate(selection: Selection): string | null {
+function validateDates(selection: Selection): string | null {
   if (
     !isSessionDate(selection.start) ||
     !isSessionDate(selection.end) ||
@@ -82,6 +83,12 @@ function validate(selection: Selection): string | null {
     return "Choose dates within 1990–2035.";
   if ((Date.parse(selection.end) - Date.parse(selection.start)) / 86_400_000 > 3660)
     return "The date range cannot exceed 3,660 calendar days.";
+  return null;
+}
+
+function validate(selection: Selection): string | null {
+  const invalid = validateDates(selection);
+  if (invalid) return invalid;
   if (
     !Number.isInteger(selection.lookback) ||
     selection.lookback < (selection.input === "log_returns" ? 33 : 32) ||
@@ -116,13 +123,17 @@ export function Dashboard({
   const [catalogAttempt, setCatalogAttempt] = useState(0);
   const [selection, setSelection] = useState(initialSelection);
   const [prices, setPrices] = useState<PriceHistory | null>(null);
+  const [coverage, setCoverage] = useState<PriceCoverageResponse | null>(null);
+  const [coverageError, setCoverageError] = useState<string | null>(null);
+  const [coverageAttempt, setCoverageAttempt] = useState(0);
+  const [downloadStatus, setDownloadStatus] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<{
     cycles: CycleAnalysis;
     forecast: ForecastAnalysis;
   } | null>(null);
   const [backtest, setBacktest] = useState<BacktestAnalysis | null>(null);
   const [error, setError] = useState<ReturnType<typeof errorDetails> | null>(null);
-  const [busy, setBusy] = useState<"analysis" | "backtest" | "replay" | null>(null);
+  const [busy, setBusy] = useState<"analysis" | "backtest" | "replay" | "download" | null>(null);
   const [replayStatus, setReplayStatus] = useState<string | null>(null);
   const active = useRef<AbortController | null>(null);
   const epoch = useRef(0);
@@ -134,6 +145,7 @@ export function Dashboard({
       .then((symbols) => {
         if (controller.signal.aborted) return;
         setCatalog(symbols);
+        setCoverage(null);
         setCatalogError(null);
         setSelection(defaults(symbols.provider, defaultAsOf, defaultStart));
       })
@@ -143,12 +155,34 @@ export function Dashboard({
     return () => controller.abort();
   }, [catalogAttempt, defaultAsOf, defaultStart]);
 
+  useEffect(() => {
+    if (!catalog) return;
+    const controller = new AbortController();
+    api
+      .getPriceCoverage(selection.ticker, controller.signal)
+      .then((value) => {
+        if (controller.signal.aborted) return;
+        if (value.provider !== catalog.provider || value.data_kind !== catalog.data_kind)
+          throw new Error("Stored coverage does not match the configured source.");
+        setCoverage(value);
+        setCoverageError(null);
+      })
+      .catch((cause: unknown) => {
+        if (!controller.signal.aborted) setCoverageError(errorDetails(cause).message);
+      });
+    return () => controller.abort();
+  }, [catalog, selection.ticker, coverageAttempt]);
+
   useEffect(() => () => active.current?.abort(), []);
 
   function change<Key extends keyof Selection>(key: Key, value: Selection[Key]) {
     active.current?.abort();
     epoch.current += 1;
     setSelection((previous) => ({ ...previous, [key]: value }));
+    if (key === "ticker") {
+      setCoverage(null);
+      setCoverageError(null);
+    }
     if (key !== "initial" && key !== "mode") {
       setPrices(null);
       setAnalysis(null);
@@ -157,9 +191,10 @@ export function Dashboard({
     setError(null);
     setBusy(null);
     setReplayStatus(null);
+    setDownloadStatus(null);
   }
 
-  function begin(stage: "analysis" | "backtest" | "replay") {
+  function begin(stage: "analysis" | "backtest" | "replay" | "download") {
     active.current?.abort();
     const controller = new AbortController();
     active.current = controller;
@@ -167,6 +202,34 @@ export function Dashboard({
     setBusy(stage);
     setError(null);
     return { controller, current: () => version === epoch.current && !controller.signal.aborted };
+  }
+
+  async function downloadPrices() {
+    const invalid = validateDates(selection);
+    if (invalid) {
+      setError({ message: invalid });
+      return;
+    }
+    const request = begin("download");
+    setPrices(null);
+    setAnalysis(null);
+    setBacktest(null);
+    setReplayStatus(null);
+    setDownloadStatus(null);
+    try {
+      const result = await api.refreshPrices(selection, request.controller.signal);
+      if (!request.current()) return;
+      if (result.provider !== catalog?.provider)
+        throw new Error("Downloaded source does not match the configured provider.");
+      setCoverage(result.coverage);
+      setDownloadStatus(
+        `Downloaded ${selection.ticker} from Alpaca for ${selection.start} through ${selection.end}. Select Run analysis to use these observations.`,
+      );
+    } catch (cause) {
+      if (request.current()) setError(errorDetails(cause));
+    } finally {
+      if (active.current === request.controller) setBusy(null);
+    }
   }
 
   async function runAnalysis(event: FormEvent<HTMLFormElement>) {
@@ -195,12 +258,7 @@ export function Dashboard({
         return;
       }
       setPrices(history);
-      if (history.bars.length < selection.lookback)
-        throw new ApiError(
-          `This range has ${history.bars.length} observations. Reduce the lookback or select more history; ${selection.lookback} sessions are required.`,
-          "insufficient_data",
-          422,
-        );
+      if (history.bars.length < selection.lookback) return;
       const query = {
         ticker: selection.ticker,
         asOf: selection.end,
@@ -402,6 +460,45 @@ export function Dashboard({
               <p className="field-help">
                 Dates select stored observations. The end date sets the requested forecast cutoff.
               </p>
+              <div className="field-help" data-testid="price-coverage">
+                {coverage ? (
+                  coverage.session_count > 0 ? (
+                    <>
+                      Stored {selection.ticker}: {coverage.first_session} → {coverage.last_session}{" "}
+                      · {coverage.session_count.toLocaleString("en-US")} sessions. Bounds may
+                      contain gaps.
+                    </>
+                  ) : (
+                    <>No stored {selection.ticker} prices for this source.</>
+                  )
+                ) : coverageError ? (
+                  <>Coverage unavailable: {coverageError}</>
+                ) : (
+                  <>Checking stored history…</>
+                )}
+                {coverage && catalog?.data_kind === "real" && (
+                  <p>Latest completed daily session: {coverage.latest_completed_session}.</p>
+                )}
+                {coverageError && (
+                  <button
+                    type="button"
+                    className="button-secondary"
+                    onClick={() => setCoverageAttempt((value) => value + 1)}
+                  >
+                    Retry coverage
+                  </button>
+                )}
+              </div>
+              {catalog?.data_kind === "real" && (
+                <button
+                  type="button"
+                  className="button-secondary"
+                  disabled={busy !== null}
+                  onClick={downloadPrices}
+                >
+                  Download selected dates from Alpaca
+                </button>
+              )}
               <label>
                 Lookback (trading sessions)
                 <input
@@ -481,6 +578,13 @@ export function Dashboard({
               </label>
               <p className="field-help">
                 Nonoverlapping tests use the same horizon. Each fold selects and fits its own model.
+                {prices && (
+                  <>
+                    {" "}
+                    This range has {prices.bars.length} sessions; one full fold needs{" "}
+                    {selection.initial + selection.horizon} (training plus horizon).
+                  </>
+                )}
               </p>
               <button
                 className="button-secondary"
@@ -518,14 +622,21 @@ export function Dashboard({
                 {error.id && <small>Request {error.id}</small>}
               </div>
             )}
+            {downloadStatus && (
+              <div className="notice" role="status">
+                {downloadStatus}
+              </div>
+            )}
             {busy && (
               <div className="loading-state" role="status" aria-live="polite">
                 <span className="spinner" aria-hidden="true" />
-                {busy === "analysis"
-                  ? "Running analysis: loading observations and fitting training-only models…"
-                  : busy === "backtest"
-                    ? "Running walk-forward backtest…"
-                    : "Replaying the saved snapshot…"}
+                {busy === "download"
+                  ? "Downloading selected daily observations from Alpaca…"
+                  : busy === "analysis"
+                    ? "Running analysis: loading observations and fitting training-only models…"
+                    : busy === "backtest"
+                      ? "Running walk-forward backtest…"
+                      : "Replaying the saved snapshot…"}
               </div>
             )}
             {!prices && !busy && (
@@ -613,6 +724,37 @@ export function Dashboard({
                         <li key={warning}>{warning.replaceAll("_", " ")}</li>
                       ))}
                     </ul>
+                  </div>
+                )}
+                {prices.bars.length < selection.lookback && (
+                  <div className="notice" data-testid="short-history">
+                    <strong>
+                      Prices loaded; more history is needed for this analysis setting.
+                    </strong>
+                    <p>
+                      This selection contains {prices.bars.length} trading sessions, while the
+                      lookback is {selection.lookback}.
+                    </p>
+                    {prices.bars.length >= (selection.input === "log_returns" ? 33 : 32) ? (
+                      <>
+                        <button
+                          type="button"
+                          className="button-secondary"
+                          onClick={() => change("lookback", prices.bars.length)}
+                        >
+                          Set lookback to {prices.bars.length} sessions
+                        </button>
+                        <p>
+                          Then select Run analysis again. This changes the fitting window
+                          explicitly.
+                        </p>
+                      </>
+                    ) : (
+                      <p>
+                        Choose at least {selection.input === "log_returns" ? 33 : 32} trading
+                        sessions for cycle analysis. The price history remains available below.
+                      </p>
+                    )}
                   </div>
                 )}
                 <section className="panel" aria-labelledby="history-heading">

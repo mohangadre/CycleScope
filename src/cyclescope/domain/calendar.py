@@ -1,6 +1,7 @@
-from datetime import date
+from datetime import date, datetime, timedelta
 from functools import lru_cache
 from typing import cast
+from zoneinfo import ZoneInfo
 
 import exchange_calendars as xcals
 
@@ -22,6 +23,14 @@ def session_dates(period: DateRange) -> tuple[date, ...]:
 def session_on_or_before(day: date) -> date:
     DateRange(start=day, end=day)
     return cast(date, _calendar().date_to_session(day, direction="previous").date())
+
+
+def completed_session_before_today(now: datetime) -> date:
+    """Conservatively exclude the current New York day's potentially partial bar."""
+    if now.utcoffset() is None:
+        raise ValueError("An aware timestamp is required")
+    yesterday = now.astimezone(ZoneInfo("America/New_York")).date() - timedelta(days=1)
+    return session_on_or_before(yesterday)
 
 
 def future_sessions(origin: date, count: int) -> tuple[date, ...]:

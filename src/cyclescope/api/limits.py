@@ -15,7 +15,9 @@ class AnalysisBodyLimit:
         if (
             scope["type"] != "http"
             or scope.get("method") != "POST"
-            or not path.startswith(("/api/v1/forecasts/", "/api/v1/backtests", "/api/v1/sectors/"))
+            or not path.startswith(
+                ("/api/v1/forecasts/", "/api/v1/backtests", "/api/v1/sectors/", "/api/v1/prices/")
+            )
         ):
             await self.app(scope, receive, send)
             return

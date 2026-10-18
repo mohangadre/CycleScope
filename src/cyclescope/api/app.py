@@ -18,6 +18,7 @@ from starlette.responses import Response
 
 from cyclescope.api.analysis import analysis_router
 from cyclescope.api.limits import AnalysisBodyLimit
+from cyclescope.api.market_data import market_data_router
 from cyclescope.api.sectors import sector_router
 from cyclescope.config import Settings
 from cyclescope.domain.errors import CycleScopeError
@@ -60,6 +61,7 @@ def create_app(
     app.state.analysis_slots = BoundedSemaphore(2)
     app.include_router(analysis_router(db, source, app.state.analysis_slots))
     app.include_router(sector_router(db, source, app.state.analysis_slots))
+    app.include_router(market_data_router(db, source, app.state.analysis_slots))
     app.add_middleware(AnalysisBodyLimit)
 
     @app.middleware("http")

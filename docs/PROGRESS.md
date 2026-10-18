@@ -188,3 +188,41 @@ production host/container builds, 21 unit tests and 13 Chromium tests passed.
 Missing local credentials were checked to fail explicitly before ingestion.
 Python production numerical/API code is unchanged by this correction; the prior
 215-test backend regression evidence remains applicable.
+
+## Date-range usability correction
+
+Added provider-specific stored coverage and an explicit browser download action
+for a selected real Alpaca range. The API reuses validated ingestion and retained
+audit snapshots; it rejects invalid, future-only and empty-session ranges before
+network access. The two-job workload limit and 64 KiB streamed-body limit also
+cover downloads. Provider entitlement/rate-limit failures remain visible without
+synthetic fallback. Supported tickers remain the documented 12-instrument catalog.
+
+The dashboard now shows available bounds/count and retains observed-price charts
+for ranges too short for the selected lookback. Users can explicitly set the
+available lookback and rerun; fewer than 32/33 sessions remain price-only. Backtest
+controls show their training-plus-horizon sample requirement. No numerical
+forecasting algorithm or favorable/unfavorable recorded result was changed.
+
+Validation: **227 backend tests, 98% coverage, no skips; 23 frontend unit tests and
+16 Chromium browser tests passed**, plus lint/format, strict types and production
+host/container builds. Actual fixture tests cover shorter dates through forecast
+and backtest, source-specific coverage when changing tickers, and visible download
+errors. Real IEX was also exercised from the browser through the host API: QQQ
+2022-01-03–2022-12-30 downloaded 251 real observations, rendered prices, and produced
+cycles/forecast after an explicit 251-session lookback choice. Only metadata and
+failure cases are mocked in browser tests; no invented prices are shown as real
+market evidence.
+
+An additional real-storage smoke check covered all 12 IEX tickers: 252 daily
+observations over 2024, a separate five-session range in March 2025, and
+cutoff-matched 126-session cycles/forecasts. All responses retained real provenance
+and matching final observed prices. This checks application behavior, not forecast
+accuracy. The four outputs of the full synthetic experiment also reproduced
+their recorded input hashes/numerical results exactly; new saved replay passed.
+
+Adding Python transport/coverage files changes package-wide source identity.
+Historical report retrieval is preserved; strict replay across that source change
+continues to reject incompatible identities. Current freshly computed reports
+replay with their own recorded environment. The full synthetic numerical reference
+comparison remains a separate verification from historical strict replay.

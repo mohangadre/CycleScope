@@ -96,6 +96,27 @@ quotes. IEX represents a single exchange's feed and can differ from consolidated
 SIP prices; adjusted history can also differ from raw quote prices. Refresh is
 explicit. Streaming quotes and automatic intraday updates are not implemented.
 
+### Change dates in the dashboard
+
+The controls show the stored date bounds and observation count for the selected
+ticker and feed. Choose your dates, then select **Run analysis**. If that history
+has not been downloaded, select **Download selected dates from Alpaca** first;
+wait for confirmation, then run the analysis. This explicit download uses the
+backend's configured credentials. Price/coverage reads never fetch upstream.
+
+The price chart remains available for short ranges. Cycle analysis requires at
+least 32 trading sessions (33 for log returns); the default lookback is 480. When
+the range contains fewer observations, the page offers an explicit button to set
+the lookback to the available count. Select Run analysis again afterward. There
+is no silent fitting-window change. A backtest additionally needs the selected
+initial training sessions plus a complete future horizon, and at most 20 folds;
+the form shows the required and available counts.
+
+Downloads accept only completed exchange sessions, conservatively excluding the
+current New York day. Future-only/weekend-only ranges and feed errors return
+clear failures. The supported catalog is currently SPY, QQQ, NVDA, MU and the
+eight specified sector ETFs, rather than the full stock market.
+
 ## Offline demonstration with synthetic prices
 
 With Docker Engine and Compose v2 installed, run from this checkout:
@@ -230,6 +251,8 @@ OpenAPI is at `/openapi.json` and interactive documentation at `/docs`.
 | `GET /health` | Database/schema readiness; no upstream fetch |
 | `GET /api/v1/symbols` | Supported instruments and selected provider/data kind |
 | `GET /api/v1/prices/{ticker}` | Stored adjusted OHLCV for inclusive `start`/`end` |
+| `GET /api/v1/prices/{ticker}/coverage` | Provider-specific stored bounds/count and latest completed session |
+| `POST /api/v1/prices/{ticker}/refresh` | Explicit real Alpaca download for JSON `start`/`end`; returns audit ID and coverage |
 | `GET /api/v1/cycles/{ticker}` | Training-only periodogram for `as_of` and session `lookback` |
 | `POST /api/v1/forecasts/{ticker}` | Cutoff forecast, future turning windows, uncalibrated band |
 | `POST /api/v1/backtests` | Rolling/expanding evaluation against matching random walk |
@@ -442,7 +465,7 @@ workflow without private keys, checks generated-contract drift, and retains fail
 
 ## Validation and remaining work
 
-**215 tests passed with 98% backend statement coverage**, no skipped tests, in the
+**227 tests passed with 98% backend statement coverage**, no skipped tests, in the
 full PostgreSQL run. Ruff lint/format, strict mypy and Alembic model parity passed.
 Regression checks cover nonaligned/off-grid signals, cutoff isolation, origin
 anchoring, ridge-bootstrap centering, metric denominators, workload bounds and
@@ -455,7 +478,7 @@ The model still lost on real data. Errors are natural-log price; details and MAE
 in [methodology](docs/METHODOLOGY.md). Passing software tests does not establish
 financial usefulness.
 
-Current frontend validation: **21 unit tests and 13 Chromium browser tests passed**,
+Current frontend validation: **23 unit tests and 16 Chromium browser tests passed**,
 including actual API metrics, cycle/forecast and sector charts, saved replay, loading,
 cancellation, empty/error/invalid-date states, and mobile overflow/keyboard checks.
 Strict TypeScript, frontend lint/format, API regeneration, and production build

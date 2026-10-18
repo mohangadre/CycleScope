@@ -36,12 +36,10 @@ print(f'Selected real Alpaca feed: {settings.alpaca_feed}. No synthetic fallback
 PY
 docker compose run --rm api /app/.venv/bin/alembic upgrade head
 as_of=${CYCLESCOPE_INGEST_END:-$(docker compose run --rm -T api /app/.venv/bin/python - <<'PY'
-from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
-from cyclescope.domain.calendar import session_on_or_before
+from datetime import UTC, datetime
+from cyclescope.domain.calendar import completed_session_before_today
 # Conservatively exclude today's possibly incomplete daily bar, including after close.
-yesterday = datetime.now(ZoneInfo('America/New_York')).date() - timedelta(days=1)
-print(session_on_or_before(yesterday).isoformat())
+print(completed_session_before_today(datetime.now(UTC)).isoformat())
 PY
 )}
 start=${CYCLESCOPE_INGEST_START:-2023-01-03}

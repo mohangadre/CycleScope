@@ -32,6 +32,56 @@ const response = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
 
 describe("same-origin typed API boundary", () => {
+  it("validates source-specific empty coverage and rejects inconsistent bounds", async () => {
+    const coverage = {
+      ticker: "SPY",
+      provider: "alpaca-iex",
+      data_kind: "real",
+      adjustment_basis: "split_dividend_adjusted",
+      session_count: 0,
+      first_session: null,
+      last_session: null,
+      last_ingested_at: null,
+      latest_completed_session: "2024-03-28",
+    };
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(response(coverage))
+      .mockResolvedValueOnce(response({ ...coverage, session_count: 10 }));
+    expect(await new ApiClient(fetcher).getPriceCoverage("SPY")).toEqual(coverage);
+    await expect(new ApiClient(fetcher).getPriceCoverage("SPY")).rejects.toThrow(
+      "Invalid stored price coverage",
+    );
+  });
+
+  it("requires real download provenance matching the requested ticker and range", async () => {
+    const body = {
+      ticker: "SPY",
+      provider: "alpaca-iex",
+      data_kind: "real",
+      requested_range: { start: query.start, end: query.end },
+      ingestion_run_id: "test-audit-id",
+      coverage: {
+        ticker: "SPY",
+        provider: "alpaca-sip",
+        data_kind: "real",
+        adjustment_basis: "split_dividend_adjusted",
+        session_count: 1,
+        first_session: "2024-03-28",
+        last_session: "2024-03-28",
+        last_ingested_at: "2024-03-29T00:00:00Z",
+        latest_completed_session: "2024-03-28",
+      },
+    };
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(response(body));
+    await expect(new ApiClient(fetcher).refreshPrices(query)).rejects.toThrow(
+      "Downloaded price source does not match",
+    );
+    expect(JSON.parse(String(fetcher.mock.calls[0][1]?.body))).toEqual({
+      start: query.start,
+      end: query.end,
+    });
+  });
   it("loads every page without dropping the 1001st observation", async () => {
     const fetcher = vi
       .fn<typeof fetch>()

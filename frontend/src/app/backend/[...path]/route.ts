@@ -3,10 +3,10 @@ export const dynamic = "force-dynamic";
 const SYMBOL = "[A-Z][A-Z0-9.-]{0,14}";
 const UUID = "[a-fA-F0-9-]{36}";
 const READ = new RegExp(
-  `^(health|api/v1/(symbols|prices/${SYMBOL}|cycles/${SYMBOL}|analyses/${UUID}|backtests/${UUID}|sectors/rotation|sectors/runs/${UUID}))$`,
+  `^(health|api/v1/(symbols|prices/${SYMBOL}(?:/coverage)?|cycles/${SYMBOL}|analyses/${UUID}|backtests/${UUID}|sectors/rotation|sectors/runs/${UUID}))$`,
 );
 const WRITE = new RegExp(
-  `^api/v1/(forecasts/${SYMBOL}|backtests(?:/${UUID}/replay)?|sectors/runs/${UUID}/replay)$`,
+  `^api/v1/(prices/${SYMBOL}/refresh|forecasts/${SYMBOL}|backtests(?:/${UUID}/replay)?|sectors/runs/${UUID}/replay)$`,
 );
 const MAX_BODY = 64 * 1024;
 

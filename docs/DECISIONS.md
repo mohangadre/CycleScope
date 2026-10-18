@@ -248,3 +248,34 @@ offline fixtures keep their own covered dates. The default analysis range is 720
 actual exchange sessions, compatible with the bounded 480/20 backtest. These are
 initial controls, not an assertion of data freshness between explicit refreshes.
 No credentials are supplied to the browser and no live quote stream is claimed.
+
+## Date selection, coverage and explicit range downloads
+
+Changing browser dates originally only searched materialized bars. The default
+480-session lookback also rejected shorter selections without an easy adjustment.
+Expose provider-specific stored bounds/count separately from the price payload,
+and add a user-triggered range download for the configured real provider. The
+download uses the same validated ingestion service, immutable audit snapshots,
+fixed provider destination, ten-second provider-request timeout, complete-session
+validation, range/body bounds and shared two-job capacity limit. GET routes remain
+free of provider I/O. The browser proxy permits only the new fixed coverage/refresh
+paths; credentials stay in the backend.
+
+Reject ranges with no exchange session or an observation beyond the conservative
+last completed New York session before calling the provider. Stored bounds alone
+do not prove every interior session exists. Price reads can display their observed
+bars; numerical services continue to reject gaps. Errors never cause cross-feed
+or synthetic substitution.
+
+Keep price charts usable when a range cannot support the chosen analytical model.
+Offer a smaller lookback as an explicit user choice and display backtest sample
+requirements. Do not silently shorten training or retune a financial model to
+make a requested date range succeed. Changing inputs clears prior results and
+ignores stale browser responses; an aborted browser request does not promise that
+an already-running server-side data ingestion was canceled.
+
+The real IEX browser download path was exercised with the host API/proxy context
+in this cloud runner (QQQ, 2022-01-03–2022-12-30, 251 observations), followed by
+short-range cycle/forecast analysis. Docker Desktop uses direct container provider
+access. This runner's API container does not inherit the host's network-secret
+proxy context; use a host API when exercising new upstream downloads here.

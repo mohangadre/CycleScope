@@ -7,6 +7,8 @@ import type {
   ForecastResult,
   PriceHistory,
   PricesResponse,
+  PriceCoverageResponse,
+  PriceRefreshResponse,
   SymbolsResponse,
   TypedAnalysis,
   SectorResponse,
@@ -131,6 +133,23 @@ function validatePrices(value: unknown): asserts value is PricesResponse {
       invalidResponse("The API returned an invalid adjusted price.");
     }
   }
+}
+
+function validateCoverage(value: unknown): asserts value is PriceCoverageResponse {
+  if (
+    !record(value) ||
+    !source(value) ||
+    typeof value.ticker !== "string" ||
+    !integer(value.session_count) ||
+    !dateString(value.latest_completed_session) ||
+    (value.last_ingested_at !== null && typeof value.last_ingested_at !== "string") ||
+    (value.session_count === 0
+      ? value.first_session !== null || value.last_session !== null
+      : !dateString(value.first_session) ||
+        !dateString(value.last_session) ||
+        value.first_session > value.last_session)
+  )
+    invalidResponse("Invalid stored price coverage.");
 }
 
 function validateForecast(value: unknown): asserts value is ForecastResult {
@@ -394,6 +413,41 @@ export class ApiClient {
     )
       invalidResponse();
     return payload as SymbolsResponse;
+  }
+
+  async getPriceCoverage(ticker: string, signal?: AbortSignal): Promise<PriceCoverageResponse> {
+    const body = await this.request(`/api/v1/prices/${tickerPath(ticker)}/coverage`, { signal });
+    validateCoverage(body);
+    if (body.ticker !== ticker) invalidResponse("Price coverage symbol does not match.");
+    return body;
+  }
+
+  async refreshPrices(query: PricesQuery, signal?: AbortSignal): Promise<PriceRefreshResponse> {
+    const body = await this.request(`/api/v1/prices/${tickerPath(query.ticker)}/refresh`, {
+      method: "POST",
+      signal,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ start: query.start, end: query.end }),
+    });
+    if (
+      !record(body) ||
+      body.ticker !== query.ticker ||
+      body.data_kind !== "real" ||
+      typeof body.provider !== "string" ||
+      typeof body.ingestion_run_id !== "string" ||
+      !record(body.requested_range) ||
+      body.requested_range.start !== query.start ||
+      body.requested_range.end !== query.end
+    )
+      invalidResponse("Invalid price download response.");
+    validateCoverage(body.coverage);
+    if (
+      body.coverage.provider !== body.provider ||
+      body.coverage.data_kind !== "real" ||
+      body.coverage.ticker !== query.ticker
+    )
+      invalidResponse("Downloaded price source does not match.");
+    return body as PriceRefreshResponse;
   }
 
   async getSectorRotation(

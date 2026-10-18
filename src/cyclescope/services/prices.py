@@ -3,12 +3,42 @@ from datetime import UTC, datetime
 from sqlalchemy import Engine, func, select
 from sqlalchemy.orm import Session, load_only
 
-from cyclescope.domain.calendar import session_dates
+from cyclescope.domain.calendar import completed_session_before_today, session_dates
 from cyclescope.domain.errors import InsufficientData
 from cyclescope.domain.models import DateRange
-from cyclescope.domain.views import PricesResponse, StoredBar
+from cyclescope.domain.views import PriceCoverageResponse, PricesResponse, StoredBar
 from cyclescope.providers.base import MarketDataProvider, instrument_for
 from cyclescope.storage.models import DailyBarRow, IngestionRunRow
+
+
+def read_coverage(
+    engine: Engine, provider: MarketDataProvider, symbol: str
+) -> PriceCoverageResponse:
+    instrument_for(symbol)
+    with Session(engine) as session:
+        first, last, count, ingested = session.execute(
+            select(
+                func.min(DailyBarRow.session_date),
+                func.max(DailyBarRow.session_date),
+                func.count(),
+                func.max(DailyBarRow.ingested_at),
+            ).where(
+                DailyBarRow.symbol == symbol,
+                DailyBarRow.provider == provider.provider_id,
+                DailyBarRow.data_kind == provider.data_kind,
+                DailyBarRow.adjustment_basis == "split_dividend_adjusted",
+            )
+        ).one()
+    return PriceCoverageResponse(
+        ticker=symbol,
+        provider=provider.provider_id,
+        data_kind=provider.data_kind,
+        first_session=first,
+        last_session=last,
+        session_count=count,
+        last_ingested_at=ingested,
+        latest_completed_session=completed_session_before_today(datetime.now(UTC)),
+    )
 
 
 def read_prices(

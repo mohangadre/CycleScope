@@ -4,6 +4,8 @@ type Schema = components["schemas"];
 
 export type SymbolsResponse = Schema["SymbolsResponse"];
 export type PricesResponse = Schema["PricesResponse"];
+export type PriceCoverageResponse = Schema["PriceCoverageResponse"];
+export type PriceRefreshResponse = Schema["PriceRefreshResponse"];
 export type StoredBar = Schema["StoredBar"];
 export type FFTConfig = Schema["FFTConfig"];
 export type HarmonicConfig = Schema["HarmonicConfig"];

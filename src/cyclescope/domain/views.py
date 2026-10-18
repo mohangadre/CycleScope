@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Literal
 from uuid import UUID
 
@@ -61,3 +61,24 @@ class PricesResponse(DomainModel):
     has_more: bool
     warnings: tuple[str, ...]
     bars: tuple[StoredBar, ...]
+
+
+class PriceCoverageResponse(DomainModel):
+    ticker: Symbol
+    provider: str
+    data_kind: DataKind
+    adjustment_basis: AdjustmentBasis = "split_dividend_adjusted"
+    first_session: date | None
+    last_session: date | None
+    session_count: int
+    last_ingested_at: datetime | None
+    latest_completed_session: date
+
+
+class PriceRefreshResponse(DomainModel):
+    ticker: Symbol
+    provider: str
+    data_kind: Literal["real"] = "real"
+    requested_range: DateRange
+    ingestion_run_id: UUID
+    coverage: PriceCoverageResponse
