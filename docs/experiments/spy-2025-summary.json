@@ -1,0 +1,480 @@
+{
+  "schema_version": "cyclescope-retrospective-holdout-summary-v1",
+  "created_at": "2026-10-18T06:54:04.029592+00:00",
+  "protocol_sha256": "594f13ce9aded250640e2d309e40459b3b2e2439aaca2d12e472cfc073dc6523",
+  "run_id": "155ec470-1f1e-4984-a1f6-3c4f6ac9b5a5",
+  "ingestion_run_id": "c84268fd-cd89-4933-9b50-5aa78ab3dce9",
+  "source": {
+    "ticker": "SPY",
+    "provider": "alpaca-iex",
+    "data_kind": "real",
+    "adjustment_basis": "split_dividend_adjusted",
+    "input_hash": "d24690aa67a8a30f9f1acd10983f8ab6b7821bbece00aa60a84869bd3dfc20a9",
+    "sample_count": 752,
+    "data_versions": [
+      "alpaca-v2:feed=iex:adjustment=all"
+    ],
+    "ingestion_run_ids": [
+      "c84268fd-cd89-4933-9b50-5aa78ab3dce9"
+    ],
+    "availability_policy": "recorded_adjusted_snapshot_not_point_in_time_feed"
+  },
+  "software": {
+    "code_sha256": "6766834d00dd6a87d25c808ddb2b12fc733d9373e0a42c3e736cdd2ecf27753a",
+    "git_revision": "e4b6f7d8be28c965cd3bfca5c9aebd568e66beae",
+    "libraries": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "exchange-calendars": "4.13.2",
+      "cyclescope": "0.2.1",
+      "python": "3.12.14"
+    }
+  },
+  "request": {
+    "start": "2023-01-03",
+    "end": "2025-12-31",
+    "ticker": "SPY",
+    "evaluation": {
+      "initial_train_sessions": 502,
+      "horizon_sessions": 20,
+      "step_sessions": 20,
+      "mode": "expanding",
+      "model": {
+        "fft": {
+          "input": "detrended_log_adjusted_close",
+          "detrend": "linear",
+          "window": "hann",
+          "min_period_sessions": 4.0,
+          "max_period_sessions": null,
+          "min_repetitions": 2,
+          "prominence_ratio": 0.05,
+          "peak_distance_bins": 1,
+          "max_peaks": 3
+        },
+        "max_harmonics": 3,
+        "ridge_alpha": 0.01,
+        "refine_frequencies": true,
+        "frequency_refinement_max_nfev": 100,
+        "bootstrap_draws": 100,
+        "bootstrap_block_sessions": 5,
+        "seed": 17,
+        "residual_quantile_mass": 0.9,
+        "turn_min_separation_sessions": 3,
+        "turn_prominence_log_price": 0.001,
+        "turn_window_tolerance_sessions": 2
+      }
+    }
+  },
+  "local_report": ".local/spy-2025-v2.json",
+  "local_report_sha256": "cb1f4b77336d03ee16188e8e0f257c3bea3fa5c598d915b99b748f7ba2cae87b",
+  "snapshot_replay": "exact_match_without_provider_request",
+  "fold_count": 12,
+  "evaluated_forecast_count": 240,
+  "unscored_tail_sessions": 10,
+  "harmonic_metrics": {
+    "target": "log_adjusted_close",
+    "error_unit": "natural_log_price",
+    "mae": 0.021544844576921372,
+    "rmse": 0.03172868539735048,
+    "error_count": 240,
+    "directional_accuracy": 0.5,
+    "direction_count": 12,
+    "direction_definition": "horizon_endpoint_return_sign_including_ties",
+    "direction_zero_tolerance_log_price": 1e-12
+  },
+  "baseline_metrics": {
+    "target": "log_adjusted_close",
+    "error_unit": "natural_log_price",
+    "mae": 0.0206251321454078,
+    "rmse": 0.02815020025096193,
+    "error_count": 240,
+    "directional_accuracy": 0.0,
+    "direction_count": 12,
+    "direction_definition": "horizon_endpoint_return_sign_including_ties",
+    "direction_zero_tolerance_log_price": 1e-12
+  },
+  "folds": [
+    {
+      "fold": 1,
+      "train_start": "2023-01-03",
+      "train_end": "2024-12-31",
+      "test_start": "2025-01-02",
+      "test_end": "2025-01-31",
+      "training_input_hash": "a49c075d807454ad9bde17aea6717d8ccc60ae2ca4da743ac62d0009bc4884f4",
+      "harmonic_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.01106040072907417,
+        "rmse": 0.015035112995715263,
+        "error_count": 20,
+        "directional_accuracy": 1.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      },
+      "baseline_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.018968834042704996,
+        "rmse": 0.022276981768200237,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      }
+    },
+    {
+      "fold": 2,
+      "train_start": "2023-01-03",
+      "train_end": "2025-01-31",
+      "test_start": "2025-02-03",
+      "test_end": "2025-03-03",
+      "training_input_hash": "fab3b92f5f3bc9bdc5d0b9b4b3fe9842765a3999f9df358fd478fc9ca73928f3",
+      "harmonic_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.01924971293554778,
+        "rmse": 0.02531721439180174,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      },
+      "baseline_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.010703782074563285,
+        "rmse": 0.013335268694606424,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      }
+    },
+    {
+      "fold": 3,
+      "train_start": "2023-01-03",
+      "train_end": "2025-03-03",
+      "test_start": "2025-03-04",
+      "test_end": "2025-03-31",
+      "training_input_hash": "057fc4d384c71ab1133dda47a44f8268a220a84bb8902ba7d03560e45f0d1eac",
+      "harmonic_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.04892707303756616,
+        "rmse": 0.053018833470935105,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      },
+      "baseline_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.029933752542760317,
+        "rmse": 0.033146223735604004,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      }
+    },
+    {
+      "fold": 4,
+      "train_start": "2023-01-03",
+      "train_end": "2025-03-31",
+      "test_start": "2025-04-01",
+      "test_end": "2025-04-29",
+      "training_input_hash": "5a4948ba6beb1b7c6bd678f08c0abeeff8ff218f6d0e53503a4f87188fd43e01",
+      "harmonic_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.06769714787434697,
+        "rmse": 0.07508075633909089,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      },
+      "baseline_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.04822096239481879,
+        "rmse": 0.058187222383599135,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      }
+    },
+    {
+      "fold": 5,
+      "train_start": "2023-01-03",
+      "train_end": "2025-04-29",
+      "test_start": "2025-04-30",
+      "test_end": "2025-05-28",
+      "training_input_hash": "2d68f9e7389f5c22912af052471beaf87bd8f955d1fccb8c83a64772d160f7a8",
+      "harmonic_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.023033696867274946,
+        "rmse": 0.026916846240607497,
+        "error_count": 20,
+        "directional_accuracy": 1.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      },
+      "baseline_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.040708604456694705,
+        "rmse": 0.04712944514882495,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      }
+    },
+    {
+      "fold": 6,
+      "train_start": "2023-01-03",
+      "train_end": "2025-05-28",
+      "test_start": "2025-05-29",
+      "test_end": "2025-06-26",
+      "training_input_hash": "2ed615a3435c80978e4febe3f460d5070ee87ca0a0f8e1c6f2fa0138eb07177e",
+      "harmonic_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.010037978156625904,
+        "rmse": 0.012996257696986204,
+        "error_count": 20,
+        "directional_accuracy": 1.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      },
+      "baseline_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.019468361727975482,
+        "rmse": 0.02200020529335527,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      }
+    },
+    {
+      "fold": 7,
+      "train_start": "2023-01-03",
+      "train_end": "2025-06-26",
+      "test_start": "2025-06-27",
+      "test_end": "2025-07-25",
+      "training_input_hash": "5d1ba740e526b1caeba1bc0f80dc92c57ea1cf7f7c3da83ecf3ac972b5bfb30f",
+      "harmonic_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.012949447346266352,
+        "rmse": 0.01811640294597503,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      },
+      "baseline_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.021193594576365583,
+        "rmse": 0.023047336400503687,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      }
+    },
+    {
+      "fold": 8,
+      "train_start": "2023-01-03",
+      "train_end": "2025-07-25",
+      "test_start": "2025-07-28",
+      "test_end": "2025-08-22",
+      "training_input_hash": "94ffead54c5f02e94890a1c280cdccc93a91e628f0975806fb30aa75ca05c59e",
+      "harmonic_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.030807507060132043,
+        "rmse": 0.03313097416382167,
+        "error_count": 20,
+        "directional_accuracy": 1.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      },
+      "baseline_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.007654181071268784,
+        "rmse": 0.00959268266033343,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      }
+    },
+    {
+      "fold": 9,
+      "train_start": "2023-01-03",
+      "train_end": "2025-08-22",
+      "test_start": "2025-08-25",
+      "test_end": "2025-09-22",
+      "training_input_hash": "108eb2a873025d34a019b00bf3dd74bec97a06838ed98b221b9ae7c8c9e07614",
+      "harmonic_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.007616191014095009,
+        "rmse": 0.009274081914837655,
+        "error_count": 20,
+        "directional_accuracy": 1.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      },
+      "baseline_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.012629605295805878,
+        "rmse": 0.01653582420392705,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      }
+    },
+    {
+      "fold": 10,
+      "train_start": "2023-01-03",
+      "train_end": "2025-09-22",
+      "test_start": "2025-09-23",
+      "test_end": "2025-10-20",
+      "training_input_hash": "9406385083a6355d79c09beea33deb67209ec7374ebf9fd8606d22fe3fa13d96",
+      "harmonic_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.006367903380912221,
+        "rmse": 0.007774566422798125,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      },
+      "baseline_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.006603397737734174,
+        "rmse": 0.00786023066247789,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      }
+    },
+    {
+      "fold": 11,
+      "train_start": "2023-01-03",
+      "train_end": "2025-10-20",
+      "test_start": "2025-10-21",
+      "test_end": "2025-11-17",
+      "training_input_hash": "3a885915ede6806daa640d03bcb6994a6a61d739fb57e3aed04f16e169b3cd44",
+      "harmonic_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.010814635482450008,
+        "rmse": 0.013106761117643022,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      },
+      "baseline_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.010299577895922018,
+        "rmse": 0.013017508794084965,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      }
+    },
+    {
+      "fold": 12,
+      "train_start": "2023-01-03",
+      "train_end": "2025-11-17",
+      "test_start": "2025-11-18",
+      "test_end": "2025-12-16",
+      "training_input_hash": "691b868ea07beb716ac229f0696a81fe45bec6f76d64ec1b042f1752b0f6d112",
+      "harmonic_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.009976441038764916,
+        "rmse": 0.011307368671495814,
+        "error_count": 20,
+        "directional_accuracy": 1.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      },
+      "baseline_metrics": {
+        "target": "log_adjusted_close",
+        "error_unit": "natural_log_price",
+        "mae": 0.021116931928279615,
+        "rmse": 0.02275130399303598,
+        "error_count": 20,
+        "directional_accuracy": 0.0,
+        "direction_count": 1,
+        "direction_definition": "horizon_endpoint_return_sign_including_ties",
+        "direction_zero_tolerance_log_price": 1e-12
+      }
+    }
+  ],
+  "original_v1_development_evidence": {
+    "label": "previously_viewed_development_diagnostic_not_fresh_holdout",
+    "symbol": "SPY",
+    "provider": "alpaca-iex",
+    "input_start": "2022-01-03",
+    "input_end": "2024-12-31",
+    "fold_count": 13,
+    "evaluated_forecast_count": 260,
+    "harmonic_mae_log_price": 0.09448227826322178,
+    "harmonic_rmse_log_price": 0.10020777479003992,
+    "random_walk_mae_log_price": 0.016978475318262947,
+    "random_walk_rmse_log_price": 0.021986290828987908
+  },
+  "limitations": [
+    "2022_to_2024_real_data_and_original_synthetic_results_were_development_diagnostics",
+    "new_2025_interval_is_retrospective_not_a_live_prospective_trial",
+    "adjusted_values_downloaded_now_are_not_point_in_time_available_observations",
+    "one_symbol_and_one_year_do_not_establish_predictive_value_or_statistical_significance",
+    "report_negative_results_and_do_not_tune_or_select_models_on_this_interval",
+    "heuristic_uncertainty_bands_are_not_calibrated_and_coverage_is_not_evaluated",
+    "no_trading_profit_or_investment_recommendation_claim"
+  ]
+}

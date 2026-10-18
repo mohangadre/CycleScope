@@ -1,0 +1,56 @@
+name: Dashboard
+on:
+  push:
+  pull_request:
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17.6-alpine
+        env:
+          POSTGRES_USER: cyclescope
+          POSTGRES_PASSWORD: cyclescope
+          POSTGRES_DB: cyclescope_ui_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U cyclescope -d cyclescope_ui_test"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      MARKET_DATA_PROVIDER: synthetic_research
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.23"
+          enable-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: uv python install 3.12
+      - run: uv sync --frozen
+      - run: npm ci
+        working-directory: frontend
+      - run: npm audit --audit-level=low
+        working-directory: frontend
+      - run: uv run python tools/export_openapi.py
+      - run: npm run generate:api
+        working-directory: frontend
+      - run: git diff --exit-code -- frontend/openapi.json frontend/src/lib/api-schema.ts
+      - run: npm run lint && npm run format:check && npm run typecheck && npm run test && npm run build
+        working-directory: frontend
+      - run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      - run: uv run python tools/run_frontend_e2e.py
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: dashboard-browser-failures
+          path: |
+            frontend/test-results/
+            frontend/playwright-report/
+            .local/e2e-*.log

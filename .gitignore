@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.env
+*.egg-info/
+dist/
+.local/
+node_modules/
+.next/
+*.tsbuildinfo
+playwright-report/
+test-results/

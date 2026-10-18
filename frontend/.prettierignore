@@ -1,0 +1,8 @@
+node_modules
+.next
+test-results
+playwright-report
+package-lock.json
+openapi.json
+src/lib/api-schema.ts
+next-env.d.ts

@@ -1,0 +1,2248 @@
+{
+  "evaluation_status": "reused_development_data",
+  "independent_evaluation": false,
+  "limitations": [
+    "These previously viewed outcomes are development diagnostics, not a fresh holdout.",
+    "Anchoring changes the forecast contract from global level to conditional increment.",
+    "Trend-only ablation reuses the joint trend; it is not a separately fitted baseline.",
+    "Ablations do not measure the new frequency-refinement or bootstrap implementations.",
+    "Historical adjusted snapshots have no point-in-time availability guarantee.",
+    "No significance, calibrated coverage, profitability or generalization claim is made."
+  ],
+  "methodology": {
+    "aggregation": "pooled errors across every scored offset; direction at horizon endpoint",
+    "anchored": "last_log_price + saved_curve(t+h) - saved_curve(t)",
+    "baseline": "last observed log adjusted close at each matching cutoff",
+    "original": "saved global harmonic level; reconstructed from saved basis and coefficients",
+    "retuning": "none; uses archived coefficients, periods, fold boundaries and targets",
+    "trend_only": "last_log_price + saved_trend_coefficient * h / saved_time_scale",
+    "without_drift": "anchored harmonic forecast minus saved fitted trend increment"
+  },
+  "reports": [
+    {
+      "archived_config": {
+        "horizon_sessions": 20,
+        "initial_train_sessions": 480,
+        "mode": "expanding",
+        "model": {
+          "bootstrap_block_sessions": 5,
+          "bootstrap_draws": 100,
+          "fft": {
+            "detrend": "linear",
+            "input": "detrended_log_adjusted_close",
+            "max_peaks": 3,
+            "max_period_sessions": null,
+            "min_period_sessions": 4.0,
+            "min_repetitions": 2,
+            "peak_distance_bins": 1,
+            "prominence_ratio": 0.05,
+            "window": "hann"
+          },
+          "max_harmonics": 3,
+          "residual_quantile_mass": 0.9,
+          "ridge_alpha": 0.01,
+          "seed": 17,
+          "turn_min_separation_sessions": 3,
+          "turn_prominence_log_price": 0.001,
+          "turn_window_tolerance_sessions": 2
+        },
+        "step_sessions": null
+      },
+      "archived_created_at": "2026-10-18T06:03:42.855058Z",
+      "archived_run_id": "93bc6f7a-814a-47e1-82d7-9495c399d96e",
+      "archived_software": {
+        "code_sha256": "4976c12797abf9f89fe1c2057b3e1ce8b7dcaf5b7eb885ac6a52467f2dd6171b",
+        "git_revision": "e4b6f7d8be28c965cd3bfca5c9aebd568e66beae",
+        "libraries": {
+          "cyclescope": "0.2.0",
+          "exchange-calendars": "4.13.2",
+          "numpy": "2.5.4",
+          "python": "3.12.14",
+          "scipy": "1.18.1"
+        }
+      },
+      "archived_source": {
+        "adjustment_basis": "split_dividend_adjusted",
+        "availability_policy": "recorded_adjusted_snapshot_not_point_in_time_feed",
+        "data_kind": "synthetic",
+        "data_versions": [
+          "synthetic-research-v1"
+        ],
+        "ingestion_run_ids": [
+          "65cc389e-1a6b-4abd-8975-e1c69425da13"
+        ],
+        "input_hash": "bad3435780dd9bf72af2f021f678d1f13b817282d974cf87c446f8e814cd2991",
+        "provider": "synthetic-research-v1",
+        "sample_count": 720,
+        "ticker": "SPY"
+      },
+      "evaluated_forecast_count": 240,
+      "evaluation_status": "reused_development_data",
+      "fold_count": 12,
+      "folds": [
+        {
+          "first_forecast_return_log_price": 0.004480535650016826,
+          "fitted_minus_observed_origin_log_price": -0.002007817525109701,
+          "fitted_origin_log_price": 4.719619925082241,
+          "fold": 1,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.0018515077103004706,
+              "rmse": 0.0022511039975517478,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.028478094686526755,
+              "rmse": 0.031386349783883154,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.0020188318220664137,
+              "rmse": 0.0026278323727545257,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.0024367492356639265,
+              "rmse": 0.0028039508026129357,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.026365245139291504,
+              "rmse": 0.02948406531761793,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 4.7216277426073505,
+          "old_bootstrap_expected_log_shift_max": -1.3857793449104459e-05,
+          "old_bootstrap_expected_log_shift_min": -1.763388060643756e-05,
+          "saved_periods_sessions": [
+            40.0,
+            120.0
+          ],
+          "test_end": "2021-12-23",
+          "test_start": "2021-11-26",
+          "train_end": "2021-11-24",
+          "train_start": "2020-01-02",
+          "training_input_hash": "0dd43209bbd949fe621e2eed2e05b03deb10acf7229e0212ed0a1b71c4c16976",
+          "training_residual_rmse_log_price": 0.002815826846190418,
+          "training_sample_count": 480
+        },
+        {
+          "first_forecast_return_log_price": 0.029604171209138386,
+          "fitted_minus_observed_origin_log_price": 0.029643440909965513,
+          "fitted_origin_log_price": 4.756351885714264,
+          "fold": 2,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.04393875419000888,
+              "rmse": 0.04842059194598345,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.04436376043373107,
+              "rmse": 0.046977906712525934,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.02240590422335296,
+              "rmse": 0.02494605579119003,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.022069367686919028,
+              "rmse": 0.024513552944786503,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.04647044645921685,
+              "rmse": 0.04918021679887051,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 4.726708444804299,
+          "old_bootstrap_expected_log_shift_max": -1.431853887382899e-05,
+          "old_bootstrap_expected_log_shift_min": -1.5338866550200297e-05,
+          "saved_periods_sessions": [
+            41.666666666666664,
+            125.0
+          ],
+          "test_end": "2022-01-24",
+          "test_start": "2021-12-27",
+          "train_end": "2021-12-23",
+          "train_start": "2020-01-02",
+          "training_input_hash": "a3310fc44d86503825214b4c008411fef24eebc968159d1ae65b86dd7ed01676",
+          "training_residual_rmse_log_price": 0.022124511494495038,
+          "training_sample_count": 500
+        },
+        {
+          "first_forecast_return_log_price": 0.028105823587783796,
+          "fitted_minus_observed_origin_log_price": 0.02233515732936997,
+          "fitted_origin_log_price": 4.713074688679076,
+          "fold": 3,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.022055566397354908,
+              "rmse": 0.022386572462952357,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.02528369433719848,
+              "rmse": 0.02810828292523059,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.0030912966670764595,
+              "rmse": 0.003845619406565209,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.004089567745047517,
+              "rmse": 0.005113106893024109,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.023249249845069153,
+              "rmse": 0.0263091485807363,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 4.690739531349706,
+          "old_bootstrap_expected_log_shift_max": -1.2557662723927413e-05,
+          "old_bootstrap_expected_log_shift_min": -1.5732315942446905e-05,
+          "saved_periods_sessions": [
+            40.0,
+            130.0
+          ],
+          "test_end": "2022-02-22",
+          "test_start": "2022-01-25",
+          "train_end": "2022-01-24",
+          "train_start": "2020-01-02",
+          "training_input_hash": "c726978923f65e42aafbe31fe0bb43c53bc0753bc421c0b171548f6b15334c4d",
+          "training_residual_rmse_log_price": 0.010320188684064674,
+          "training_sample_count": 520
+        },
+        {
+          "first_forecast_return_log_price": 0.04788413112148859,
+          "fitted_minus_observed_origin_log_price": 0.046164939556156526,
+          "fitted_origin_log_price": 4.7443191225183154,
+          "fold": 4,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.06474425798157508,
+              "rmse": 0.06857343628646824,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.029789753651906947,
+              "rmse": 0.03321675021797844,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.026272887375534813,
+              "rmse": 0.029252150274854456,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.025743350718525536,
+              "rmse": 0.02858044575670923,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.03196787542416959,
+              "rmse": 0.035141798047781475,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 4.698154182962159,
+          "old_bootstrap_expected_log_shift_max": -1.4401156494504868e-05,
+          "old_bootstrap_expected_log_shift_min": -1.5880415819238722e-05,
+          "saved_periods_sessions": [
+            41.53846153846154,
+            108.0
+          ],
+          "test_end": "2022-03-22",
+          "test_start": "2022-02-23",
+          "train_end": "2022-02-22",
+          "train_start": "2020-01-02",
+          "training_input_hash": "1bd6b146f587cd09a21eb30a6338f0f4ccf8f351131895da431235e3112760ab",
+          "training_residual_rmse_log_price": 0.02508992072913153,
+          "training_sample_count": 540
+        },
+        {
+          "first_forecast_return_log_price": 0.029290531315139035,
+          "fitted_minus_observed_origin_log_price": 0.021594353978629854,
+          "fitted_origin_log_price": 4.7203232753418485,
+          "fold": 5,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.020165979667979485,
+              "rmse": 0.02094154944468893,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.04421635193728908,
+              "rmse": 0.04724028874344298,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.004969862421442128,
+              "rmse": 0.0058242604978070095,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.005954872624870822,
+              "rmse": 0.007513418848346295,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.04206164211728862,
+              "rmse": 0.04495230773975232,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 4.698728921363219,
+          "old_bootstrap_expected_log_shift_max": -1.3325213894968017e-05,
+          "old_bootstrap_expected_log_shift_min": -1.710687863153344e-05,
+          "saved_periods_sessions": [
+            40.0,
+            112.0
+          ],
+          "test_end": "2022-04-20",
+          "test_start": "2022-03-23",
+          "train_end": "2022-03-22",
+          "train_start": "2020-01-02",
+          "training_input_hash": "5e5b122fcda1aa10fd794af59e1243a69eef0caf699935e9cdd82e48db73ccb7",
+          "training_residual_rmse_log_price": 0.010064753468473296,
+          "training_sample_count": 560
+        },
+        {
+          "first_forecast_return_log_price": 0.03229547863830362,
+          "fitted_minus_observed_origin_log_price": 0.031069543521408782,
+          "fitted_origin_log_price": 4.7689641101499305,
+          "fold": 6,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.03668339221061392,
+              "rmse": 0.040721841830821434,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.020783166333080593,
+              "rmse": 0.02320358261837668,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.021495278366281532,
+              "rmse": 0.025028977361588337,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.02177746572134893,
+              "rmse": 0.026018119675595582,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.022480732589255804,
+              "rmse": 0.02486802480240151,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 4.737894566628522,
+          "old_bootstrap_expected_log_shift_max": -1.4260944647013896e-05,
+          "old_bootstrap_expected_log_shift_min": -1.5302583721222197e-05,
+          "saved_periods_sessions": [
+            41.42857142857143,
+            116.0
+          ],
+          "test_end": "2022-05-18",
+          "test_start": "2022-04-21",
+          "train_end": "2022-04-20",
+          "train_start": "2020-01-02",
+          "training_input_hash": "ea982f47ddc4326db4c545edd2ab6ee6e28d23c2c42a8f4fd4b39a8b626d893b",
+          "training_residual_rmse_log_price": 0.02208298820275777,
+          "training_sample_count": 580
+        },
+        {
+          "first_forecast_return_log_price": 0.00343549435145718,
+          "fitted_minus_observed_origin_log_price": -0.0030604113363219554,
+          "fitted_origin_log_price": 4.743676196669473,
+          "fold": 7,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.003036325205464907,
+              "rmse": 0.003412345547764181,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.02607449389663219,
+              "rmse": 0.029372990026686596,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.0043379031983532546,
+              "rmse": 0.005202107141765179,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.003713693986520905,
+              "rmse": 0.004091344364272454,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.024369148672760944,
+              "rmse": 0.027546337097025256,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 4.746736608005795,
+          "old_bootstrap_expected_log_shift_max": -1.3353983482961384e-05,
+          "old_bootstrap_expected_log_shift_min": -1.6332124543029046e-05,
+          "saved_periods_sessions": [
+            40.0,
+            120.0
+          ],
+          "test_end": "2022-06-16",
+          "test_start": "2022-05-19",
+          "train_end": "2022-05-18",
+          "train_start": "2020-01-02",
+          "training_input_hash": "c2c52023d8355248737271209ede125af05727c1e4f4d934966da522ad983173",
+          "training_residual_rmse_log_price": 0.002849565441504825,
+          "training_sample_count": 600
+        },
+        {
+          "first_forecast_return_log_price": 0.034548032302845755,
+          "fitted_minus_observed_origin_log_price": 0.03458122421925314,
+          "fitted_origin_log_price": 4.779159324443675,
+          "fold": 8,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.04432681259902558,
+              "rmse": 0.048502300779663075,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.03954160383082343,
+              "rmse": 0.04213064454931209,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.02056974699903864,
+              "rmse": 0.022695176295198946,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.020569746999038595,
+              "rmse": 0.02273287803523737,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.04163998137576268,
+              "rmse": 0.04431171610189005,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 4.744578100224422,
+          "old_bootstrap_expected_log_shift_max": -1.3682912832388073e-05,
+          "old_bootstrap_expected_log_shift_min": -1.4529827777500763e-05,
+          "saved_periods_sessions": [
+            41.333333333333336,
+            124.0
+          ],
+          "test_end": "2022-07-18",
+          "test_start": "2022-06-17",
+          "train_end": "2022-06-16",
+          "train_start": "2020-01-02",
+          "training_input_hash": "1bd144f5b7401a892fc339d3faa6ecc4053353d40af7b62ccb4ca3cfd202ea30",
+          "training_residual_rmse_log_price": 0.02221492735786115,
+          "training_sample_count": 620
+        },
+        {
+          "first_forecast_return_log_price": 0.025148004292047332,
+          "fitted_minus_observed_origin_log_price": 0.019415750891124794,
+          "fitted_origin_log_price": 4.736963408050464,
+          "fold": 9,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.021833576376343,
+              "rmse": 0.02213010995332484,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.022243378532858717,
+              "rmse": 0.025508087541861776,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.0033715348609344884,
+              "rmse": 0.004345410135029235,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.0032331461056018364,
+              "rmse": 0.003846412146414201,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.020684037605689598,
+              "rmse": 0.023868424343008992,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 4.717547657159339,
+          "old_bootstrap_expected_log_shift_max": -1.2388646196879943e-05,
+          "old_bootstrap_expected_log_shift_min": -1.4940664398275624e-05,
+          "saved_periods_sessions": [
+            40.0,
+            128.0
+          ],
+          "test_end": "2022-08-15",
+          "test_start": "2022-07-19",
+          "train_end": "2022-07-18",
+          "train_start": "2020-01-02",
+          "training_input_hash": "654c9aaeb98c56c33a5f87cad598bfabefbf4880746aa1bb5398bd55bbbd52be",
+          "training_residual_rmse_log_price": 0.010364205103870866,
+          "training_sample_count": 640
+        },
+        {
+          "first_forecast_return_log_price": 0.05119748966833981,
+          "fitted_minus_observed_origin_log_price": 0.04955448641688598,
+          "fitted_origin_log_price": 4.766478641175023,
+          "fold": 10,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.06265428316082403,
+              "rmse": 0.06644851687466999,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.025141445346193246,
+              "rmse": 0.028466796033849783,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.02359506424478801,
+              "rmse": 0.025718687197815438,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.023283297946701698,
+              "rmse": 0.025456588648319452,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.0268219735579589,
+              "rmse": 0.03026056782954271,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 4.716924154758137,
+          "old_bootstrap_expected_log_shift_max": -1.3700179186405215e-05,
+          "old_bootstrap_expected_log_shift_min": -1.4836637526684447e-05,
+          "saved_periods_sessions": [
+            41.25,
+            110.0
+          ],
+          "test_end": "2022-09-13",
+          "test_start": "2022-08-16",
+          "train_end": "2022-08-15",
+          "train_start": "2020-01-02",
+          "training_input_hash": "bbfca0398f826f319ebcf59e5b21c5cf5c6ad851aa7dbcdb19b79b2c0e420b6c",
+          "training_residual_rmse_log_price": 0.02535666055455806,
+          "training_sample_count": 660
+        },
+        {
+          "first_forecast_return_log_price": 0.031264521637536014,
+          "fitted_minus_observed_origin_log_price": 0.023625467838082947,
+          "fitted_origin_log_price": 4.74408224840943,
+          "fold": 11,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.019487004312024502,
+              "rmse": 0.020172584654189342,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.0464362932547945,
+              "rmse": 0.04945447579577172,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.005083270144255891,
+              "rmse": 0.006657080060363548,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.006969339767466121,
+              "rmse": 0.008888945890764773,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.044306859809234565,
+              "rmse": 0.04719348591312421,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 4.720456780571347,
+          "old_bootstrap_expected_log_shift_max": -1.2919921305456637e-05,
+          "old_bootstrap_expected_log_shift_min": -1.597619511626188e-05,
+          "saved_periods_sessions": [
+            40.0,
+            113.33333333333333
+          ],
+          "test_end": "2022-10-11",
+          "test_start": "2022-09-14",
+          "train_end": "2022-09-13",
+          "train_start": "2020-01-02",
+          "training_input_hash": "6dd4b9673279c325c97e5789bd72f520fdc2b039929844d864ca3b2f20132e3b",
+          "training_residual_rmse_log_price": 0.010145690288948801,
+          "training_sample_count": 680
+        },
+        {
+          "first_forecast_return_log_price": 0.03220219426745441,
+          "fitted_minus_observed_origin_log_price": 0.03099016052888892,
+          "fitted_origin_log_price": 4.791975875912792,
+          "fold": 12,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.03532253645396386,
+              "rmse": 0.03910114843800645,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.019629499129307247,
+              "rmse": 0.022061507956243124,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.019700649481572706,
+              "rmse": 0.024080141492634138,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.020131163943281426,
+              "rmse": 0.025145575171538554,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.020951976324836474,
+              "rmse": 0.023732349472527708,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 4.760985715383903,
+          "old_bootstrap_expected_log_shift_max": -1.3736420937526646e-05,
+          "old_bootstrap_expected_log_shift_min": -1.4574793788295226e-05,
+          "saved_periods_sessions": [
+            41.1764705882353,
+            116.66666666666666
+          ],
+          "test_end": "2022-11-08",
+          "test_start": "2022-10-12",
+          "train_end": "2022-10-11",
+          "train_start": "2020-01-02",
+          "training_input_hash": "2af0ff85372dcc3de6c5a6b030f759e9396a935df963c31a88879619983f73de",
+          "training_residual_rmse_log_price": 0.02226824686841979,
+          "training_sample_count": 700
+        }
+      ],
+      "independent_evaluation": false,
+      "input_report": "docs/experiments/legacy/synthetic-week2-v1.json",
+      "input_report_sha256": "882c7293f8e9e123f929d5c839fb9dab1c9ba9675e0ee26acda554abe322cc53",
+      "input_sample_count": 720,
+      "old_ridge_bootstrap": {
+        "bands_are_uncalibrated": true,
+        "centering_defect": "ridge_refit_of_fitted_values_shrinks_coefficients_again",
+        "expected_coefficient_formula": "E[beta_star] = A @ X @ beta",
+        "expected_future_log_shift_maximum": -1.2388646196879943e-05,
+        "expected_future_log_shift_minimum": -1.763388060643756e-05,
+        "saved_band_excludes_saved_point_forecast_count": 0
+      },
+      "origin_gap": {
+        "definition": "fitted_curve_at_cutoff_minus_last_observed_log_price",
+        "maximum": 0.04955448641688598,
+        "minimum": -0.0030604113363219554,
+        "rmse": 0.029581605980551248
+      },
+      "pooled_metrics": {
+        "archived_global_level": {
+          "direction_count": 12,
+          "direction_definition": "horizon_endpoint_return_sign_including_ties",
+          "direction_zero_tolerance_log_price": 1e-12,
+          "directional_accuracy": 0.6666666666666666,
+          "error_count": 240,
+          "error_unit": "natural_log_price",
+          "mae": 0.03134166635545655,
+          "rmse": 0.03963900678295371,
+          "target": "log_adjusted_close"
+        },
+        "last_observed_random_walk": {
+          "direction_count": 12,
+          "direction_definition": "horizon_endpoint_return_sign_including_ties",
+          "direction_zero_tolerance_log_price": 1e-12,
+          "directional_accuracy": 0.0,
+          "error_count": 240,
+          "error_unit": "natural_log_price",
+          "mae": 0.030998461280861856,
+          "rmse": 0.03522161496871095,
+          "target": "log_adjusted_close"
+        },
+        "posthoc_origin_anchored_harmonic": {
+          "direction_count": 12,
+          "direction_definition": "horizon_endpoint_return_sign_including_ties",
+          "direction_zero_tolerance_log_price": 1e-12,
+          "directional_accuracy": 0.5,
+          "error_count": 240,
+          "error_unit": "natural_log_price",
+          "mae": 0.013076019150391442,
+          "rmse": 0.018272694429104508,
+          "target": "log_adjusted_close"
+        },
+        "posthoc_origin_anchored_harmonic_without_drift": {
+          "direction_count": 12,
+          "direction_definition": "horizon_endpoint_return_sign_including_ties",
+          "direction_zero_tolerance_log_price": 1e-12,
+          "directional_accuracy": 0.5,
+          "error_count": 240,
+          "error_unit": "natural_log_price",
+          "mae": 0.013330980206748862,
+          "rmse": 0.018468046996354327,
+          "target": "log_adjusted_close"
+        },
+        "posthoc_origin_anchored_trend_only": {
+          "direction_count": 12,
+          "direction_definition": "horizon_endpoint_return_sign_including_ties",
+          "direction_zero_tolerance_log_price": 1e-12,
+          "directional_accuracy": 0.6666666666666666,
+          "error_count": 240,
+          "error_unit": "natural_log_price",
+          "mae": 0.030947430743377892,
+          "rmse": 0.03518099838842248,
+          "target": "log_adjusted_close"
+        }
+      },
+      "reconstruction": {
+        "maximum_saved_prediction_reconstruction_error_log_price": 0.0,
+        "saved_predictions_and_original_metrics_verified": true
+      },
+      "unscored_sessions_after_initial_training": 0
+    },
+    {
+      "archived_config": {
+        "horizon_sessions": 20,
+        "initial_train_sessions": 480,
+        "mode": "expanding",
+        "model": {
+          "bootstrap_block_sessions": 5,
+          "bootstrap_draws": 100,
+          "fft": {
+            "detrend": "linear",
+            "input": "detrended_log_adjusted_close",
+            "max_peaks": 3,
+            "max_period_sessions": null,
+            "min_period_sessions": 4.0,
+            "min_repetitions": 2,
+            "peak_distance_bins": 1,
+            "prominence_ratio": 0.05,
+            "window": "hann"
+          },
+          "max_harmonics": 3,
+          "residual_quantile_mass": 0.9,
+          "ridge_alpha": 0.01,
+          "seed": 17,
+          "turn_min_separation_sessions": 3,
+          "turn_prominence_log_price": 0.001,
+          "turn_window_tolerance_sessions": 2
+        },
+        "step_sessions": null
+      },
+      "archived_created_at": "2026-10-18T06:04:17.648000Z",
+      "archived_run_id": "c36cfc0c-7d08-4dee-a4e1-012705f007f4",
+      "archived_software": {
+        "code_sha256": "4976c12797abf9f89fe1c2057b3e1ce8b7dcaf5b7eb885ac6a52467f2dd6171b",
+        "git_revision": "e4b6f7d8be28c965cd3bfca5c9aebd568e66beae",
+        "libraries": {
+          "cyclescope": "0.2.0",
+          "exchange-calendars": "4.13.2",
+          "numpy": "2.5.4",
+          "python": "3.12.14",
+          "scipy": "1.18.1"
+        }
+      },
+      "archived_source": {
+        "adjustment_basis": "split_dividend_adjusted",
+        "availability_policy": "recorded_adjusted_snapshot_not_point_in_time_feed",
+        "data_kind": "real",
+        "data_versions": [
+          "alpaca-v2:feed=iex:adjustment=all"
+        ],
+        "ingestion_run_ids": [
+          "d2c50f9a-6bdb-4de2-9972-a8c600980856"
+        ],
+        "input_hash": "9130396bca3466a8ff89ca260f7e07b4cf9759da70cf130d4f2b389470cbc201",
+        "provider": "alpaca-iex",
+        "sample_count": 753,
+        "ticker": "SPY"
+      },
+      "evaluated_forecast_count": 260,
+      "evaluation_status": "reused_development_data",
+      "fold_count": 13,
+      "folds": [
+        {
+          "first_forecast_return_log_price": -0.0699105303594898,
+          "fitted_minus_observed_origin_log_price": -0.07118626698712305,
+          "fitted_origin_log_price": 6.012082320595896,
+          "fold": 1,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.08402631214544351,
+              "rmse": 0.08469580124858965,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.027356262342535808,
+              "rmse": 0.03277166119782026,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.013621405718307144,
+              "rmse": 0.016668064556054515,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.01511748390878096,
+              "rmse": 0.018455174710994175,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.025753405664163065,
+              "rmse": 0.03090561490181908,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 6.083268587583019,
+          "old_bootstrap_expected_log_shift_max": -1.016489867817733e-05,
+          "old_bootstrap_expected_log_shift_min": -1.397366347089573e-05,
+          "saved_periods_sessions": [
+            60.0,
+            120.0
+          ],
+          "test_end": "2023-12-28",
+          "test_start": "2023-11-30",
+          "train_end": "2023-11-29",
+          "train_start": "2022-01-03",
+          "training_input_hash": "126f7e873c6916a1e717000603d7f3c2a99639a2c520b1f99d03700552596715",
+          "training_residual_rmse_log_price": 0.060075950455583456,
+          "training_sample_count": 480
+        },
+        {
+          "first_forecast_return_log_price": -0.09808345747316416,
+          "fitted_minus_observed_origin_log_price": -0.09711275941385367,
+          "fitted_origin_log_price": 6.0375426272850445,
+          "fold": 2,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.11464485511360416,
+              "rmse": 0.11684443864252403,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.01145686645029027,
+              "rmse": 0.014448516474519408,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.0224677853801341,
+              "rmse": 0.028575416310046665,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.024004363356821035,
+              "rmse": 0.030430734470693672,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.011217843209472323,
+              "rmse": 0.013422271598666526,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 6.134655386698898,
+          "old_bootstrap_expected_log_shift_max": -1.093701851370155e-05,
+          "old_bootstrap_expected_log_shift_min": -1.2276291866621013e-05,
+          "saved_periods_sessions": [
+            55.55555555555555,
+            100.0
+          ],
+          "test_end": "2024-01-29",
+          "test_start": "2023-12-29",
+          "train_end": "2023-12-28",
+          "train_start": "2022-01-03",
+          "training_input_hash": "5ac5d2fb6297acc43f36436247056d3cb0e781f235a6d35c3ec8daae52d5ac3c",
+          "training_residual_rmse_log_price": 0.06305218256990877,
+          "training_sample_count": 500
+        },
+        {
+          "first_forecast_return_log_price": -0.12650448292240224,
+          "fitted_minus_observed_origin_log_price": -0.1253828744566885,
+          "fitted_origin_log_price": 6.039320438836863,
+          "fold": 3,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.1465935700257889,
+              "rmse": 0.14735912481233507,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.01564918722775279,
+              "rmse": 0.018502614194512837,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.022773097642720418,
+              "rmse": 0.025979424533205717,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.024922427552039127,
+              "rmse": 0.028462787524732587,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.013521350617527305,
+              "rmse": 0.016171857336032755,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 6.164703313293551,
+          "old_bootstrap_expected_log_shift_max": -1.2989906759145646e-05,
+          "old_bootstrap_expected_log_shift_min": -1.5744774770078755e-05,
+          "saved_periods_sessions": [
+            104.0,
+            57.77777777777777
+          ],
+          "test_end": "2024-02-27",
+          "test_start": "2024-01-30",
+          "train_end": "2024-01-29",
+          "train_start": "2022-01-03",
+          "training_input_hash": "9c934c020144aedc2bcc9642f983d0a3b0e58d0491bf5e1b3c7919a7592a0557",
+          "training_residual_rmse_log_price": 0.06496783538719758,
+          "training_sample_count": 520
+        },
+        {
+          "first_forecast_return_log_price": -0.12445732928715625,
+          "fitted_minus_observed_origin_log_price": -0.1250089210625145,
+          "fitted_origin_log_price": 6.071150033691147,
+          "fold": 4,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.1437971975396049,
+              "rmse": 0.1444759058254688,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.015492093824387964,
+              "rmse": 0.018325642206556827,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.019080577831128175,
+              "rmse": 0.02342333615916315,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.021856576277548133,
+              "rmse": 0.026618447323729217,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.012742516474937826,
+              "rmse": 0.015192473983603086,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 6.1961589547536615,
+          "old_bootstrap_expected_log_shift_max": -1.706777806068918e-05,
+          "old_bootstrap_expected_log_shift_min": -2.0256910888380318e-05,
+          "saved_periods_sessions": [
+            108.0,
+            54.0
+          ],
+          "test_end": "2024-03-26",
+          "test_start": "2024-02-28",
+          "train_end": "2024-02-27",
+          "train_start": "2022-01-03",
+          "training_input_hash": "164b86b9740fc94a6a03729bb6e07a74aa51649b5d0284d7eeaa5c0b4e7a52ae",
+          "training_residual_rmse_log_price": 0.06662042973702663,
+          "training_sample_count": 540
+        },
+        {
+          "first_forecast_return_log_price": -0.11687844237571188,
+          "fitted_minus_observed_origin_log_price": -0.11630651644355261,
+          "fitted_origin_log_price": 6.105912544979974,
+          "fold": 5,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.11427402485526547,
+              "rmse": 0.11483547966147102,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.016502620671205958,
+              "rmse": 0.022239301534787405,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.009704077004366507,
+              "rmse": 0.011522397949851895,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.009110142498637064,
+              "rmse": 0.010178877746801197,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.019406570079720842,
+              "rmse": 0.025724808820791246,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 6.222219061423527,
+          "old_bootstrap_expected_log_shift_max": -2.0875930658625162e-05,
+          "old_bootstrap_expected_log_shift_min": -2.621990753049444e-05,
+          "saved_periods_sessions": [
+            112.0,
+            56.0,
+            80.0
+          ],
+          "test_end": "2024-04-24",
+          "test_start": "2024-03-27",
+          "train_end": "2024-03-26",
+          "train_start": "2022-01-03",
+          "training_input_hash": "de0edc36699ef2c93fb23868de4789d076f1d45b86d8637116dcc4647fc1ed54",
+          "training_residual_rmse_log_price": 0.06877550685823733,
+          "training_sample_count": 560
+        },
+        {
+          "first_forecast_return_log_price": -0.07038380297649205,
+          "fitted_minus_observed_origin_log_price": -0.07227494191659112,
+          "fitted_origin_log_price": 6.124454277618309,
+          "fold": 6,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.08846247584138575,
+              "rmse": 0.09067299853466863,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.025847189045114537,
+              "rmse": 0.030625524413257506,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.02102579197923129,
+              "rmse": 0.025651886594296285,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.024338231282372468,
+              "rmse": 0.02973445334393587,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.022534749741973358,
+              "rmse": 0.026356243275134906,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 6.1967292195349,
+          "old_bootstrap_expected_log_shift_max": -2.3815501448813735e-05,
+          "old_bootstrap_expected_log_shift_min": -3.055122166075285e-05,
+          "saved_periods_sessions": [
+            116.0,
+            52.72727272727273,
+            82.85714285714286
+          ],
+          "test_end": "2024-05-22",
+          "test_start": "2024-04-25",
+          "train_end": "2024-04-24",
+          "train_start": "2022-01-03",
+          "training_input_hash": "d8a357ea8b59627246c11b08c605c694da25d131c82c1cbe451601628362cf62",
+          "training_residual_rmse_log_price": 0.069535282429078,
+          "training_sample_count": 580
+        },
+        {
+          "first_forecast_return_log_price": -0.08897164031110893,
+          "fitted_minus_observed_origin_log_price": -0.09007474306648433,
+          "fitted_origin_log_price": 6.153276290887919,
+          "fold": 7,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.10047334469468297,
+              "rmse": 0.10207318459289956,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.014411294078145209,
+              "rmse": 0.018170774252983378,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.016604724871093258,
+              "rmse": 0.020788769434998928,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.01940497063331916,
+              "rmse": 0.024968222631825403,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.011595502864875628,
+              "rmse": 0.014126024076507378,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 6.243351033954403,
+          "old_bootstrap_expected_log_shift_max": -2.618264688690382e-05,
+          "old_bootstrap_expected_log_shift_min": -3.321846344060622e-05,
+          "saved_periods_sessions": [
+            120.0,
+            54.54545454545455,
+            85.71428571428571
+          ],
+          "test_end": "2024-06-21",
+          "test_start": "2024-05-23",
+          "train_end": "2024-05-22",
+          "train_start": "2022-01-03",
+          "training_input_hash": "4e649bcbc44ef5aa21ab63832cff2e48421e6938f49b7b66361451eb7194a43b",
+          "training_residual_rmse_log_price": 0.07049322071742599,
+          "training_sample_count": 600
+        },
+        {
+          "first_forecast_return_log_price": -0.09638719605587998,
+          "fitted_minus_observed_origin_log_price": -0.09725340513816416,
+          "fitted_origin_log_price": 6.1759443046941875,
+          "fold": 8,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.10765918156919155,
+              "rmse": 0.10814659322393498,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.015717251179309333,
+              "rmse": 0.019321303748595333,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.011298169272025583,
+              "rmse": 0.014610490509480979,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.015460651590060248,
+              "rmse": 0.01922102075118109,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.011396360650662362,
+              "rmse": 0.014695787808002665,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 6.273197709832352,
+          "old_bootstrap_expected_log_shift_max": -2.8025400204350328e-05,
+          "old_bootstrap_expected_log_shift_min": -3.372244507519136e-05,
+          "saved_periods_sessions": [
+            124.0,
+            56.36363636363636
+          ],
+          "test_end": "2024-07-22",
+          "test_start": "2024-06-24",
+          "train_end": "2024-06-21",
+          "train_start": "2022-01-03",
+          "training_input_hash": "560926cdcbd7c285cde2d643d8de0ae396a51ac36fc2706257d9b2b15a40b27b",
+          "training_residual_rmse_log_price": 0.0727402952934819,
+          "training_sample_count": 620
+        },
+        {
+          "first_forecast_return_log_price": -0.0631348734802426,
+          "fitted_minus_observed_origin_log_price": -0.06517525197504614,
+          "fitted_origin_log_price": 6.2272453768152545,
+          "fold": 9,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.038244504604090325,
+              "rmse": 0.04437083518422771,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.02802350009459955,
+              "rmse": 0.03457744215106396,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.032492352582351544,
+              "rmse": 0.038260417059843316,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.030208628530617076,
+              "rmse": 0.03530845723036224,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.03215144207382288,
+              "rmse": 0.03860855361909991,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 6.292420628790301,
+          "old_bootstrap_expected_log_shift_max": -3.13351791199041e-05,
+          "old_bootstrap_expected_log_shift_min": -3.8676772468387365e-05,
+          "saved_periods_sessions": [
+            128.0,
+            53.33333333333333,
+            80.0
+          ],
+          "test_end": "2024-08-19",
+          "test_start": "2024-07-23",
+          "train_end": "2024-07-22",
+          "train_start": "2022-01-03",
+          "training_input_hash": "f77ed21c6b623f9cb179fd6751139ae0214cec4312bd18b1df44e6fb66a1ade2",
+          "training_residual_rmse_log_price": 0.07327047174738135,
+          "training_sample_count": 640
+        },
+        {
+          "first_forecast_return_log_price": -0.06982885849852316,
+          "fitted_minus_observed_origin_log_price": -0.071035696845267,
+          "fitted_origin_log_price": 6.230061975784492,
+          "fold": 10,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.06392443987230698,
+              "rmse": 0.06506714551145823,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.00914575321553901,
+              "rmse": 0.012654613333092068,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.010331863810609887,
+              "rmse": 0.014070159478718099,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.009806844551666938,
+              "rmse": 0.012677887535724503,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.011386221398065777,
+              "rmse": 0.016205106940686193,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 6.301097672629759,
+          "old_bootstrap_expected_log_shift_max": -3.397783333909489e-05,
+          "old_bootstrap_expected_log_shift_min": -4.352020571044274e-05,
+          "saved_periods_sessions": [
+            132.0,
+            220.0,
+            55.0
+          ],
+          "test_end": "2024-09-17",
+          "test_start": "2024-08-20",
+          "train_end": "2024-08-19",
+          "train_start": "2022-01-03",
+          "training_input_hash": "b3adc356646346e85d5c49d42eeb7afa87c928c0de44b80ae46416a44c987bd2",
+          "training_residual_rmse_log_price": 0.07518504970838451,
+          "training_sample_count": 660
+        },
+        {
+          "first_forecast_return_log_price": -0.06651934840033125,
+          "fitted_minus_observed_origin_log_price": -0.0688967907940965,
+          "fitted_origin_log_price": 6.238727950194615,
+          "fold": 11,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.07430554341069798,
+              "rmse": 0.0747727306780074,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.019066552126619563,
+              "rmse": 0.02092392395420033,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.00796492205332866,
+              "rmse": 0.009944952305280311,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.011377630496554315,
+              "rmse": 0.014868593776508185,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.013649356102427835,
+              "rmse": 0.01511168508675734,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 6.307624740988712,
+          "old_bootstrap_expected_log_shift_max": -3.5374763967498736e-05,
+          "old_bootstrap_expected_log_shift_min": -4.546625482244393e-05,
+          "saved_periods_sessions": [
+            226.66666666666666,
+            136.0,
+            52.30769230769231
+          ],
+          "test_end": "2024-10-15",
+          "test_start": "2024-09-18",
+          "train_end": "2024-09-17",
+          "train_start": "2022-01-03",
+          "training_input_hash": "9474f8a733cbe096073d31af856833092bf580c8242fb6eb25d64785a30d4a09",
+          "training_residual_rmse_log_price": 0.07551917412081344,
+          "training_sample_count": 680
+        },
+        {
+          "first_forecast_return_log_price": -0.0897286109853761,
+          "fitted_minus_observed_origin_log_price": -0.09258200175118247,
+          "fitted_origin_log_price": 6.247442148817259,
+          "fold": 12,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.07738983411667863,
+              "rmse": 0.07889485604923442,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.01179196818799264,
+              "rmse": 0.015963773110433472,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.0156559965103642,
+              "rmse": 0.021587353794693134,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.013754265016160306,
+              "rmse": 0.017879208238553313,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.011330309888885504,
+              "rmse": 0.014043162864867112,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 6.340024150568442,
+          "old_bootstrap_expected_log_shift_max": -3.711839009980884e-05,
+          "old_bootstrap_expected_log_shift_min": -4.796785962068215e-05,
+          "saved_periods_sessions": [
+            233.33333333333331,
+            116.66666666666666,
+            53.84615384615385
+          ],
+          "test_end": "2024-11-12",
+          "test_start": "2024-10-16",
+          "train_end": "2024-10-15",
+          "train_start": "2022-01-03",
+          "training_input_hash": "d7866d01125315e3d445ae78a25748e44572ee41c341a7b22f10327cc1dcd457",
+          "training_residual_rmse_log_price": 0.0745821200643009,
+          "training_sample_count": 700
+        },
+        {
+          "first_forecast_return_log_price": -0.08648942572226836,
+          "fitted_minus_observed_origin_log_price": -0.08889695647047091,
+          "fitted_origin_log_price": 6.280010382171909,
+          "fold": 13,
+          "metrics": {
+            "archived_global_level": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.07447433363314201,
+              "rmse": 0.07473627200493384,
+              "target": "log_adjusted_close"
+            },
+            "last_observed_random_walk": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 0.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.010259640693925664,
+              "rmse": 0.01178359085349582,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.014422622837328892,
+              "rmse": 0.01571928855269058,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_harmonic_without_drift": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.008958029306616266,
+              "rmse": 0.011580787470380261,
+              "target": "log_adjusted_close"
+            },
+            "posthoc_origin_anchored_trend_only": {
+              "direction_count": 1,
+              "direction_definition": "horizon_endpoint_return_sign_including_ties",
+              "direction_zero_tolerance_log_price": 1e-12,
+              "directional_accuracy": 1.0,
+              "error_count": 20,
+              "error_unit": "natural_log_price",
+              "mae": 0.007067712480771027,
+              "rmse": 0.008989575118311086,
+              "target": "log_adjusted_close"
+            }
+          },
+          "observed_origin_log_price": 6.36890733864238,
+          "old_bootstrap_expected_log_shift_max": -3.914478679530643e-05,
+          "old_bootstrap_expected_log_shift_min": -5.027416928199943e-05,
+          "saved_periods_sessions": [
+            240.0,
+            120.0,
+            55.38461538461538
+          ],
+          "test_end": "2024-12-11",
+          "test_start": "2024-11-13",
+          "train_end": "2024-11-12",
+          "train_start": "2022-01-03",
+          "training_input_hash": "d49f873acf8fa879acb11ef11684143157394cc4925cb31bc10bca6eab0e2ff6",
+          "training_residual_rmse_log_price": 0.07454350294837925,
+          "training_sample_count": 720
+        }
+      ],
+      "independent_evaluation": false,
+      "input_report": ".local/legacy/spy-week2-v1.json",
+      "input_report_sha256": "7fd41b8229fd69d6d65db11a27ccad7aa13bf77c569b60d2a0e2d7470ea55b2f",
+      "input_sample_count": 753,
+      "old_ridge_bootstrap": {
+        "bands_are_uncalibrated": true,
+        "centering_defect": "ridge_refit_of_fitted_values_shrinks_coefficients_again",
+        "expected_coefficient_formula": "E[beta_star] = A @ X @ beta",
+        "expected_future_log_shift_maximum": -1.016489867817733e-05,
+        "expected_future_log_shift_minimum": -5.027416928199943e-05,
+        "saved_band_excludes_saved_point_forecast_count": 0
+      },
+      "origin_gap": {
+        "definition": "fitted_curve_at_cutoff_minus_last_observed_log_price",
+        "maximum": -0.06517525197504614,
+        "minimum": -0.1253828744566885,
+        "rmse": 0.0931020006157475
+      },
+      "pooled_metrics": {
+        "archived_global_level": {
+          "direction_count": 13,
+          "direction_definition": "horizon_endpoint_return_sign_including_ties",
+          "direction_zero_tolerance_log_price": 1e-12,
+          "directional_accuracy": 0.07692307692307693,
+          "error_count": 260,
+          "error_unit": "natural_log_price",
+          "mae": 0.09448227826322178,
+          "rmse": 0.10020777479003992,
+          "target": "log_adjusted_close"
+        },
+        "last_observed_random_walk": {
+          "direction_count": 13,
+          "direction_definition": "horizon_endpoint_return_sign_including_ties",
+          "direction_zero_tolerance_log_price": 1e-12,
+          "directional_accuracy": 0.0,
+          "error_count": 260,
+          "error_unit": "natural_log_price",
+          "mae": 0.016978475318262947,
+          "rmse": 0.021986290828987908,
+          "target": "log_adjusted_close"
+        },
+        "posthoc_origin_anchored_harmonic": {
+          "direction_count": 13,
+          "direction_definition": "horizon_endpoint_return_sign_including_ties",
+          "direction_zero_tolerance_log_price": 1e-12,
+          "directional_accuracy": 0.5384615384615384,
+          "error_count": 260,
+          "error_unit": "natural_log_price",
+          "mae": 0.016726414422537667,
+          "rmse": 0.02188822502434647,
+          "target": "log_adjusted_close"
+        },
+        "posthoc_origin_anchored_harmonic_without_drift": {
+          "direction_count": 13,
+          "direction_definition": "horizon_endpoint_return_sign_including_ties",
+          "direction_zero_tolerance_log_price": 1e-12,
+          "directional_accuracy": 0.38461538461538464,
+          "error_count": 260,
+          "error_unit": "natural_log_price",
+          "mae": 0.017563095769322547,
+          "rmse": 0.02295174524036067,
+          "target": "log_adjusted_close"
+        },
+        "posthoc_origin_anchored_trend_only": {
+          "direction_count": 13,
+          "direction_definition": "horizon_endpoint_return_sign_including_ties",
+          "direction_zero_tolerance_log_price": 1e-12,
+          "directional_accuracy": 0.9230769230769231,
+          "error_count": 260,
+          "error_unit": "natural_log_price",
+          "mae": 0.01567333394210044,
+          "rmse": 0.020864387289305772,
+          "target": "log_adjusted_close"
+        }
+      },
+      "reconstruction": {
+        "maximum_saved_prediction_reconstruction_error_log_price": 0.0,
+        "saved_predictions_and_original_metrics_verified": true
+      },
+      "unscored_sessions_after_initial_training": 13
+    }
+  ],
+  "schema_version": "week2-archive-diagnosis-v1",
+  "tool": {
+    "numpy_version": "2.5.4",
+    "path": "tools/diagnose_week2_archive.py",
+    "sha256": "6603e976363d69056bab782b41f531eda028d9e9190a47ea60708370865dcb1f"
+  }
+}

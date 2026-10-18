@@ -1,0 +1,28 @@
+# Optional override for this cloud runner's egress proxy and trusted CA.
+# The CA is a build secret and is never copied into the application image.
+services:
+  api:
+    build:
+      network: host
+      extra_hosts:
+        - "${CYCLESCOPE_PROXY_HOST:?Use tools/cloud_build.py}=${CYCLESCOPE_PROXY_IP:?Use tools/cloud_build.py}"
+      args:
+        - HTTP_PROXY
+        - HTTPS_PROXY
+        - NO_PROXY
+      secrets:
+        - proxy_ca
+  web:
+    build:
+      network: host
+      extra_hosts:
+        - "${CYCLESCOPE_PROXY_HOST:?Use tools/cloud_build.py}=${CYCLESCOPE_PROXY_IP:?Use tools/cloud_build.py}"
+      args:
+        - HTTP_PROXY
+        - HTTPS_PROXY
+        - NO_PROXY
+      secrets:
+        - proxy_ca
+secrets:
+  proxy_ca:
+    file: ${SSL_CERT_FILE:?Set SSL_CERT_FILE to your trusted CA bundle}

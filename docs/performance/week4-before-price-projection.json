@@ -1,0 +1,120 @@
+{
+  "measured_at_utc": "2026-10-18T18:57:48.843985+00:00",
+  "scope": "Serial loopback HTTP including JSON transfer, database reads, and report persistence; no result cache. Not a cold-start or concurrency benchmark.",
+  "cache_note": "Processes and database already running; OS/database caches may already be warm, including the first measured request.",
+  "hardware": {
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+    "machine": "x86_64",
+    "cpu_count": 5,
+    "process_cpu_affinity_count": 5
+  },
+  "software": {
+    "code_sha256": "4f659a24532f50a82c515ee4310549dc553dcb1bab902d6f74dd40a9d94cba0b",
+    "git_revision": "e4b6f7d8be28c965cd3bfca5c9aebd568e66beae",
+    "libraries": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "exchange-calendars": "4.13.2",
+      "cyclescope": "0.4.0",
+      "python": "3.12.14"
+    }
+  },
+  "measurements": {
+    "prices": {
+      "request_path": "/api/v1/prices/SPY?start=2020-01-02&end=2022-11-08&limit=1000",
+      "provider": "synthetic-research-v1",
+      "data_kind": "synthetic",
+      "first_measured_ms": 1610.693160999972,
+      "warm_request_count": 20,
+      "warm_ms": [
+        980.5831039998338,
+        867.4368450001566,
+        897.2647309999502,
+        878.4716499999377,
+        933.603580999943,
+        817.4503479999657,
+        918.5687619999499,
+        800.0897770000392,
+        915.6327600001077,
+        852.5078299999223,
+        847.5237630000265,
+        839.5606629999293,
+        920.1668349999181,
+        823.0043009998553,
+        854.9722909999673,
+        805.739696000046,
+        897.955631999821,
+        844.4368660000237,
+        892.4883940001109,
+        791.494006999983
+      ],
+      "warm_p50_ms": 861.204568000062,
+      "warm_p95_ms": 935.9525571499375,
+      "warm_max_ms": 980.5831039998338
+    },
+    "cycles": {
+      "request_path": "/api/v1/cycles/SPY?as_of=2022-11-08&lookback=480",
+      "provider": "synthetic-research-v1",
+      "data_kind": "synthetic",
+      "first_measured_ms": 25.803429999996297,
+      "warm_request_count": 20,
+      "warm_ms": [
+        19.51817500003017,
+        18.745258000080867,
+        18.776592999984132,
+        18.93624300009833,
+        19.35733400000572,
+        18.61467100002301,
+        18.281952000052115,
+        19.104035000054864,
+        19.475161999935153,
+        19.356012000116607,
+        18.9549110000371,
+        18.631074999802877,
+        18.700058999911562,
+        18.775231000063286,
+        19.278536000001623,
+        20.878374999938387,
+        20.065316000000166,
+        19.634030000133862,
+        18.825547000005827,
+        19.01731399993878
+      ],
+      "warm_p50_ms": 18.98611249998794,
+      "warm_p95_ms": 20.105968949997077,
+      "warm_max_ms": 20.878374999938387
+    },
+    "sectors": {
+      "request_path": "/api/v1/sectors/rotation?as_of=2022-11-08&lookback_sessions=126&momentum_sessions=20&smoothing_sessions=5",
+      "provider": "synthetic-research-v1",
+      "data_kind": "synthetic",
+      "first_measured_ms": 148.6419529999239,
+      "warm_request_count": 20,
+      "warm_ms": [
+        57.861618000060844,
+        57.63910499990743,
+        64.75499399994078,
+        57.8016879999268,
+        60.10209700002633,
+        144.2964979999033,
+        61.705090000032214,
+        62.671103999946354,
+        59.47945399998389,
+        60.93881699985104,
+        57.99024500015548,
+        148.88863299984223,
+        60.738632000038706,
+        58.73754099980033,
+        58.76708400001007,
+        59.13582800008044,
+        149.92839799992908,
+        58.11378099997455,
+        59.774171000071874,
+        58.27872700001535
+      ],
+      "warm_p50_ms": 59.62681250002788,
+      "warm_p95_ms": 148.94062124984657,
+      "warm_max_ms": 149.92839799992908
+    }
+  }
+}

@@ -1,0 +1,9 @@
+.git
+.venv
+.env
+__pycache__
+.local
+.pytest_cache
+.mypy_cache
+.ruff_cache
+frontend

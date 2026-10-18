@@ -1,0 +1,3565 @@
+{
+  "components": {
+    "schemas": {
+      "AnalysisResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "cycles",
+              "forecast",
+              "backtest"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CycleResult"
+              },
+              {
+                "$ref": "#/components/schemas/ForecastResult"
+              },
+              {
+                "$ref": "#/components/schemas/BacktestResult"
+              }
+            ],
+            "title": "Result"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "default": "analysis-v2",
+            "enum": [
+              "analysis-v1",
+              "analysis-v2"
+            ],
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "software": {
+            "$ref": "#/components/schemas/SoftwareIdentity"
+          },
+          "source": {
+            "$ref": "#/components/schemas/DataProvenance"
+          }
+        },
+        "required": [
+          "run_id",
+          "created_at",
+          "kind",
+          "source",
+          "software",
+          "result"
+        ],
+        "title": "AnalysisResponse",
+        "type": "object"
+      },
+      "BacktestConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "horizon_sessions": {
+            "default": 20,
+            "maximum": 63.0,
+            "minimum": 1.0,
+            "title": "Horizon Sessions",
+            "type": "integer"
+          },
+          "initial_train_sessions": {
+            "default": 360,
+            "maximum": 1260.0,
+            "minimum": 32.0,
+            "title": "Initial Train Sessions",
+            "type": "integer"
+          },
+          "mode": {
+            "default": "expanding",
+            "enum": [
+              "expanding",
+              "rolling"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "model": {
+            "$ref": "#/components/schemas/HarmonicConfig"
+          },
+          "step_sessions": {
+            "anyOf": [
+              {
+                "maximum": 2520.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step Sessions"
+          }
+        },
+        "title": "BacktestConfig",
+        "type": "object"
+      },
+      "BacktestFold": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline_log_price": {
+            "title": "Baseline Log Price",
+            "type": "number"
+          },
+          "baseline_metrics": {
+            "$ref": "#/components/schemas/Metrics"
+          },
+          "baseline_name": {
+            "const": "random_walk_last_observed_log_price",
+            "default": "random_walk_last_observed_log_price",
+            "title": "Baseline Name",
+            "type": "string"
+          },
+          "fold": {
+            "title": "Fold",
+            "type": "integer"
+          },
+          "forecast": {
+            "$ref": "#/components/schemas/ForecastResult"
+          },
+          "harmonic_metrics": {
+            "$ref": "#/components/schemas/Metrics"
+          },
+          "realized": {
+            "items": {
+              "$ref": "#/components/schemas/RealizedPoint"
+            },
+            "title": "Realized",
+            "type": "array"
+          },
+          "test_end": {
+            "format": "date",
+            "title": "Test End",
+            "type": "string"
+          },
+          "test_start": {
+            "format": "date",
+            "title": "Test Start",
+            "type": "string"
+          },
+          "train_end": {
+            "format": "date",
+            "title": "Train End",
+            "type": "string"
+          },
+          "train_start": {
+            "format": "date",
+            "title": "Train Start",
+            "type": "string"
+          },
+          "training_input_hash": {
+            "title": "Training Input Hash",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fold",
+          "train_start",
+          "train_end",
+          "test_start",
+          "test_end",
+          "training_input_hash",
+          "forecast",
+          "realized",
+          "baseline_log_price",
+          "harmonic_metrics",
+          "baseline_metrics"
+        ],
+        "title": "BacktestFold",
+        "type": "object"
+      },
+      "BacktestRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "format": "date",
+            "title": "End",
+            "type": "string"
+          },
+          "evaluation": {
+            "$ref": "#/components/schemas/BacktestConfig"
+          },
+          "start": {
+            "format": "date",
+            "title": "Start",
+            "type": "string"
+          },
+          "ticker": {
+            "maxLength": 15,
+            "pattern": "^[A-Z][A-Z0-9]{0,9}(?:[.-][A-Z0-9]{1,4})?$",
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "end",
+          "ticker"
+        ],
+        "title": "BacktestRequest",
+        "type": "object"
+      },
+      "BacktestResult": {
+        "additionalProperties": false,
+        "properties": {
+          "aggregation": {
+            "const": "pooled_errors_all_offsets_direction_at_horizon_endpoint",
+            "default": "pooled_errors_all_offsets_direction_at_horizon_endpoint",
+            "title": "Aggregation",
+            "type": "string"
+          },
+          "baseline_metrics": {
+            "$ref": "#/components/schemas/Metrics"
+          },
+          "config": {
+            "$ref": "#/components/schemas/BacktestConfig"
+          },
+          "end": {
+            "format": "date",
+            "title": "End",
+            "type": "string"
+          },
+          "evaluated_forecast_count": {
+            "title": "Evaluated Forecast Count",
+            "type": "integer"
+          },
+          "fold_count": {
+            "title": "Fold Count",
+            "type": "integer"
+          },
+          "folds": {
+            "items": {
+              "$ref": "#/components/schemas/BacktestFold"
+            },
+            "title": "Folds",
+            "type": "array"
+          },
+          "harmonic_metrics": {
+            "$ref": "#/components/schemas/Metrics"
+          },
+          "horizon_sessions": {
+            "title": "Horizon Sessions",
+            "type": "integer"
+          },
+          "input_sample_count": {
+            "title": "Input Sample Count",
+            "type": "integer"
+          },
+          "start": {
+            "format": "date",
+            "title": "Start",
+            "type": "string"
+          },
+          "unscored_sessions_after_initial_training": {
+            "title": "Unscored Sessions After Initial Training",
+            "type": "integer"
+          },
+          "warnings": {
+            "default": [
+              "retrospective_evaluation_on_recorded_adjusted_snapshot",
+              "no_trading_profit_or_significance_claim",
+              "uncertainty_coverage_not_evaluated"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "config",
+          "start",
+          "end",
+          "input_sample_count",
+          "horizon_sessions",
+          "fold_count",
+          "evaluated_forecast_count",
+          "unscored_sessions_after_initial_training",
+          "folds",
+          "harmonic_metrics",
+          "baseline_metrics"
+        ],
+        "title": "BacktestResult",
+        "type": "object"
+      },
+      "CycleEstimate": {
+        "additionalProperties": false,
+        "properties": {
+          "frequency": {
+            "title": "Frequency",
+            "type": "number"
+          },
+          "period_sessions": {
+            "title": "Period Sessions",
+            "type": "number"
+          },
+          "power": {
+            "minimum": 0.0,
+            "title": "Power",
+            "type": "number"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "significance_status": {
+            "const": "not_tested",
+            "default": "not_tested",
+            "title": "Significance Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "frequency",
+          "period_sessions",
+          "power",
+          "rank"
+        ],
+        "title": "CycleEstimate",
+        "type": "object"
+      },
+      "CycleResult": {
+        "additionalProperties": false,
+        "properties": {
+          "analysis": {
+            "$ref": "#/components/schemas/SpectrumResult"
+          },
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "config": {
+            "$ref": "#/components/schemas/FFTConfig"
+          },
+          "forecast_origin": {
+            "format": "date",
+            "title": "Forecast Origin",
+            "type": "string"
+          },
+          "price_sample_count": {
+            "title": "Price Sample Count",
+            "type": "integer"
+          },
+          "train_start": {
+            "format": "date",
+            "title": "Train Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "as_of",
+          "train_start",
+          "forecast_origin",
+          "price_sample_count",
+          "config",
+          "analysis"
+        ],
+        "title": "CycleResult",
+        "type": "object"
+      },
+      "DataProvenance": {
+        "additionalProperties": false,
+        "properties": {
+          "adjustment_basis": {
+            "const": "split_dividend_adjusted",
+            "title": "Adjustment Basis",
+            "type": "string"
+          },
+          "availability_policy": {
+            "const": "recorded_adjusted_snapshot_not_point_in_time_feed",
+            "default": "recorded_adjusted_snapshot_not_point_in_time_feed",
+            "title": "Availability Policy",
+            "type": "string"
+          },
+          "data_kind": {
+            "enum": [
+              "synthetic",
+              "real"
+            ],
+            "title": "Data Kind",
+            "type": "string"
+          },
+          "data_versions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Data Versions",
+            "type": "array"
+          },
+          "ingestion_run_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Ingestion Run Ids",
+            "type": "array"
+          },
+          "input_hash": {
+            "title": "Input Hash",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "sample_count": {
+            "title": "Sample Count",
+            "type": "integer"
+          },
+          "ticker": {
+            "maxLength": 15,
+            "pattern": "^[A-Z][A-Z0-9]{0,9}(?:[.-][A-Z0-9]{1,4})?$",
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "provider",
+          "data_kind",
+          "adjustment_basis",
+          "input_hash",
+          "sample_count",
+          "data_versions",
+          "ingestion_run_ids"
+        ],
+        "title": "DataProvenance",
+        "type": "object"
+      },
+      "DateRange": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "format": "date",
+            "title": "End",
+            "type": "string"
+          },
+          "start": {
+            "format": "date",
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "title": "DateRange",
+        "type": "object"
+      },
+      "ErrorDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "request_id"
+        ],
+        "title": "ErrorDetail",
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorDetail"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "title": "ErrorResponse",
+        "type": "object"
+      },
+      "FFTConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "detrend": {
+            "default": "linear",
+            "enum": [
+              "linear",
+              "constant"
+            ],
+            "title": "Detrend",
+            "type": "string"
+          },
+          "input": {
+            "default": "detrended_log_adjusted_close",
+            "enum": [
+              "detrended_log_adjusted_close",
+              "log_returns"
+            ],
+            "title": "Input",
+            "type": "string"
+          },
+          "max_peaks": {
+            "default": 3,
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Max Peaks",
+            "type": "integer"
+          },
+          "max_period_sessions": {
+            "anyOf": [
+              {
+                "maximum": 1260.0,
+                "minimum": 2.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Period Sessions"
+          },
+          "min_period_sessions": {
+            "default": 4,
+            "maximum": 1260.0,
+            "minimum": 2.0,
+            "title": "Min Period Sessions",
+            "type": "number"
+          },
+          "min_repetitions": {
+            "default": 2,
+            "maximum": 10.0,
+            "minimum": 2.0,
+            "title": "Min Repetitions",
+            "type": "integer"
+          },
+          "peak_distance_bins": {
+            "default": 1,
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Peak Distance Bins",
+            "type": "integer"
+          },
+          "prominence_ratio": {
+            "default": 0.05,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Prominence Ratio",
+            "type": "number"
+          },
+          "window": {
+            "default": "hann",
+            "enum": [
+              "hann",
+              "boxcar"
+            ],
+            "title": "Window",
+            "type": "string"
+          }
+        },
+        "title": "FFTConfig",
+        "type": "object"
+      },
+      "ForecastPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "log_value": {
+            "title": "Log Value",
+            "type": "number"
+          },
+          "lower": {
+            "exclusiveMinimum": 0.0,
+            "title": "Lower",
+            "type": "number"
+          },
+          "session_date": {
+            "format": "date",
+            "title": "Session Date",
+            "type": "string"
+          },
+          "session_offset": {
+            "title": "Session Offset",
+            "type": "integer"
+          },
+          "upper": {
+            "exclusiveMinimum": 0.0,
+            "title": "Upper",
+            "type": "number"
+          },
+          "value": {
+            "exclusiveMinimum": 0.0,
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "session_offset",
+          "session_date",
+          "value",
+          "log_value",
+          "lower",
+          "upper"
+        ],
+        "title": "ForecastPoint",
+        "type": "object"
+      },
+      "ForecastRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "horizon_sessions": {
+            "default": 20,
+            "maximum": 126.0,
+            "minimum": 1.0,
+            "title": "Horizon Sessions",
+            "type": "integer"
+          },
+          "lookback": {
+            "default": 504,
+            "maximum": 2520.0,
+            "minimum": 32.0,
+            "title": "Lookback",
+            "type": "integer"
+          },
+          "model": {
+            "$ref": "#/components/schemas/HarmonicConfig"
+          }
+        },
+        "required": [
+          "as_of"
+        ],
+        "title": "ForecastRequest",
+        "type": "object"
+      },
+      "ForecastResult": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "config": {
+            "$ref": "#/components/schemas/HarmonicConfig"
+          },
+          "fit": {
+            "$ref": "#/components/schemas/HarmonicFit"
+          },
+          "forecast_origin": {
+            "format": "date",
+            "title": "Forecast Origin",
+            "type": "string"
+          },
+          "horizon_sessions": {
+            "title": "Horizon Sessions",
+            "type": "integer"
+          },
+          "last_observed_price": {
+            "title": "Last Observed Price",
+            "type": "number"
+          },
+          "period_unit": {
+            "const": "trading_sessions",
+            "default": "trading_sessions",
+            "title": "Period Unit",
+            "type": "string"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "price_unit": {
+            "const": "USD_per_share",
+            "default": "USD_per_share",
+            "title": "Price Unit",
+            "type": "string"
+          },
+          "selected_cycles": {
+            "items": {
+              "$ref": "#/components/schemas/CycleEstimate"
+            },
+            "title": "Selected Cycles",
+            "type": "array"
+          },
+          "train_end": {
+            "format": "date",
+            "title": "Train End",
+            "type": "string"
+          },
+          "train_start": {
+            "format": "date",
+            "title": "Train Start",
+            "type": "string"
+          },
+          "training_sample_count": {
+            "title": "Training Sample Count",
+            "type": "integer"
+          },
+          "turning_points": {
+            "items": {
+              "$ref": "#/components/schemas/TurningPoint"
+            },
+            "title": "Turning Points",
+            "type": "array"
+          },
+          "uncertainty": {
+            "$ref": "#/components/schemas/UncertaintyMethod"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "as_of",
+          "forecast_origin",
+          "train_start",
+          "train_end",
+          "training_sample_count",
+          "horizon_sessions",
+          "last_observed_price",
+          "config",
+          "fit",
+          "selected_cycles",
+          "points",
+          "turning_points",
+          "uncertainty",
+          "warnings"
+        ],
+        "title": "ForecastResult",
+        "type": "object"
+      },
+      "FrequencyRefinement": {
+        "additionalProperties": false,
+        "properties": {
+          "converged": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Converged"
+          },
+          "final_objective": {
+            "minimum": 0.0,
+            "title": "Final Objective",
+            "type": "number"
+          },
+          "fitted_periods_sessions": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Fitted Periods Sessions",
+            "type": "array"
+          },
+          "frequency_bounds": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Frequency Bounds",
+            "type": "array"
+          },
+          "frequency_unit": {
+            "const": "cycles_per_trading_session",
+            "default": "cycles_per_trading_session",
+            "title": "Frequency Unit",
+            "type": "string"
+          },
+          "initial_objective": {
+            "minimum": 0.0,
+            "title": "Initial Objective",
+            "type": "number"
+          },
+          "initial_periods_sessions": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Initial Periods Sessions",
+            "type": "array"
+          },
+          "method": {
+            "const": "bounded_variable_projection",
+            "default": "bounded_variable_projection",
+            "title": "Method",
+            "type": "string"
+          },
+          "nfev": {
+            "title": "Nfev",
+            "type": "integer"
+          },
+          "objective": {
+            "const": "training_squared_log_residuals_plus_ridge_penalty",
+            "default": "training_squared_log_residuals_plus_ridge_penalty",
+            "title": "Objective",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "refined",
+              "disabled",
+              "no_cycles",
+              "unchanged",
+              "fallback_not_converged",
+              "fallback_no_improvement",
+              "fallback_numerical_failure"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "initial_periods_sessions",
+          "fitted_periods_sessions",
+          "frequency_bounds",
+          "initial_objective",
+          "final_objective",
+          "nfev",
+          "converged"
+        ],
+        "title": "FrequencyRefinement",
+        "type": "object"
+      },
+      "HarmonicConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "bootstrap_block_sessions": {
+            "default": 5,
+            "maximum": 30.0,
+            "minimum": 1.0,
+            "title": "Bootstrap Block Sessions",
+            "type": "integer"
+          },
+          "bootstrap_draws": {
+            "default": 100,
+            "maximum": 500.0,
+            "minimum": 50.0,
+            "title": "Bootstrap Draws",
+            "type": "integer"
+          },
+          "fft": {
+            "$ref": "#/components/schemas/FFTConfig"
+          },
+          "frequency_refinement_max_nfev": {
+            "default": 100,
+            "maximum": 200.0,
+            "minimum": 10.0,
+            "title": "Frequency Refinement Max Nfev",
+            "type": "integer"
+          },
+          "max_harmonics": {
+            "default": 3,
+            "maximum": 3.0,
+            "minimum": 1.0,
+            "title": "Max Harmonics",
+            "type": "integer"
+          },
+          "refine_frequencies": {
+            "default": true,
+            "title": "Refine Frequencies",
+            "type": "boolean"
+          },
+          "residual_quantile_mass": {
+            "default": 0.9,
+            "maximum": 0.99,
+            "minimum": 0.5,
+            "title": "Residual Quantile Mass",
+            "type": "number"
+          },
+          "ridge_alpha": {
+            "default": 0.01,
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Ridge Alpha",
+            "type": "number"
+          },
+          "seed": {
+            "default": 0,
+            "maximum": 4294967295.0,
+            "minimum": 0.0,
+            "title": "Seed",
+            "type": "integer"
+          },
+          "turn_min_separation_sessions": {
+            "default": 3,
+            "maximum": 30.0,
+            "minimum": 1.0,
+            "title": "Turn Min Separation Sessions",
+            "type": "integer"
+          },
+          "turn_prominence_log_price": {
+            "default": 0.001,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Turn Prominence Log Price",
+            "type": "number"
+          },
+          "turn_window_tolerance_sessions": {
+            "default": 2,
+            "maximum": 10.0,
+            "minimum": 0.0,
+            "title": "Turn Window Tolerance Sessions",
+            "type": "integer"
+          }
+        },
+        "title": "HarmonicConfig",
+        "type": "object"
+      },
+      "HarmonicFit": {
+        "additionalProperties": false,
+        "properties": {
+          "coefficients": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Coefficients",
+            "type": "array"
+          },
+          "fitted_origin_log_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fitted Origin Log Price"
+          },
+          "frequency_refinement": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FrequencyRefinement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "model_version": {
+            "default": "harmonic-increment-log-price-v2",
+            "enum": [
+              "harmonic-ridge-log-price-v1",
+              "harmonic-increment-log-price-v2"
+            ],
+            "title": "Model Version",
+            "type": "string"
+          },
+          "observed_origin_log_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed Origin Log Price"
+          },
+          "origin_adjustment_log_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin Adjustment Log Price"
+          },
+          "periods_sessions": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Periods Sessions",
+            "type": "array"
+          },
+          "projection_method": {
+            "anyOf": [
+              {
+                "const": "conditional_fitted_change",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Projection Method"
+          },
+          "ridge_alpha": {
+            "title": "Ridge Alpha",
+            "type": "number"
+          },
+          "target": {
+            "const": "log_adjusted_close",
+            "default": "log_adjusted_close",
+            "title": "Target",
+            "type": "string"
+          },
+          "time_scale_sessions": {
+            "title": "Time Scale Sessions",
+            "type": "integer"
+          },
+          "training_residual_rmse_log_price": {
+            "title": "Training Residual Rmse Log Price",
+            "type": "number"
+          }
+        },
+        "required": [
+          "periods_sessions",
+          "coefficients",
+          "time_scale_sessions",
+          "ridge_alpha",
+          "training_residual_rmse_log_price"
+        ],
+        "title": "HarmonicFit",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data_kind": {
+            "enum": [
+              "synthetic",
+              "real"
+            ],
+            "title": "Data Kind",
+            "type": "string"
+          },
+          "database": {
+            "enum": [
+              "ready",
+              "unavailable"
+            ],
+            "title": "Database",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "database",
+          "provider",
+          "data_kind"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "Instrument": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_class": {
+            "enum": [
+              "equity",
+              "etf"
+            ],
+            "title": "Asset Class",
+            "type": "string"
+          },
+          "calendar": {
+            "const": "XNYS",
+            "default": "XNYS",
+            "title": "Calendar",
+            "type": "string"
+          },
+          "currency": {
+            "const": "USD",
+            "default": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "exchange": {
+            "title": "Exchange",
+            "type": "string"
+          },
+          "symbol": {
+            "maxLength": 15,
+            "pattern": "^[A-Z][A-Z0-9]{0,9}(?:[.-][A-Z0-9]{1,4})?$",
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "display_name",
+          "asset_class",
+          "exchange"
+        ],
+        "title": "Instrument",
+        "type": "object"
+      },
+      "Metrics": {
+        "additionalProperties": false,
+        "properties": {
+          "direction_count": {
+            "title": "Direction Count",
+            "type": "integer"
+          },
+          "direction_definition": {
+            "const": "horizon_endpoint_return_sign_including_ties",
+            "default": "horizon_endpoint_return_sign_including_ties",
+            "title": "Direction Definition",
+            "type": "string"
+          },
+          "direction_zero_tolerance_log_price": {
+            "default": 1e-12,
+            "title": "Direction Zero Tolerance Log Price",
+            "type": "number"
+          },
+          "directional_accuracy": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Directional Accuracy",
+            "type": "number"
+          },
+          "error_count": {
+            "title": "Error Count",
+            "type": "integer"
+          },
+          "error_unit": {
+            "const": "natural_log_price",
+            "default": "natural_log_price",
+            "title": "Error Unit",
+            "type": "string"
+          },
+          "mae": {
+            "minimum": 0.0,
+            "title": "Mae",
+            "type": "number"
+          },
+          "rmse": {
+            "minimum": 0.0,
+            "title": "Rmse",
+            "type": "number"
+          },
+          "target": {
+            "const": "log_adjusted_close",
+            "default": "log_adjusted_close",
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mae",
+          "rmse",
+          "error_count",
+          "directional_accuracy",
+          "direction_count"
+        ],
+        "title": "Metrics",
+        "type": "object"
+      },
+      "PricesResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "adjustment_basis": {
+            "const": "split_dividend_adjusted",
+            "title": "Adjustment Basis",
+            "type": "string"
+          },
+          "bars": {
+            "items": {
+              "$ref": "#/components/schemas/StoredBar"
+            },
+            "title": "Bars",
+            "type": "array"
+          },
+          "calendar": {
+            "const": "XNYS",
+            "default": "XNYS",
+            "title": "Calendar",
+            "type": "string"
+          },
+          "currency": {
+            "const": "USD",
+            "default": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "data_kind": {
+            "enum": [
+              "synthetic",
+              "real"
+            ],
+            "title": "Data Kind",
+            "type": "string"
+          },
+          "date_basis": {
+            "const": "exchange_session",
+            "default": "exchange_session",
+            "title": "Date Basis",
+            "type": "string"
+          },
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "price_unit": {
+            "const": "USD_per_share",
+            "default": "USD_per_share",
+            "title": "Price Unit",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "requested_range": {
+            "$ref": "#/components/schemas/DateRange"
+          },
+          "ticker": {
+            "maxLength": 15,
+            "pattern": "^[A-Z][A-Z0-9]{0,9}(?:[.-][A-Z0-9]{1,4})?$",
+            "title": "Ticker",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "volume_unit": {
+            "const": "shares",
+            "default": "shares",
+            "title": "Volume Unit",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "ticker",
+          "provider",
+          "data_kind",
+          "adjustment_basis",
+          "requested_range",
+          "total",
+          "limit",
+          "offset",
+          "has_more",
+          "warnings",
+          "bars"
+        ],
+        "title": "PricesResponse",
+        "type": "object"
+      },
+      "RealizedPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "log_value": {
+            "title": "Log Value",
+            "type": "number"
+          },
+          "session_date": {
+            "format": "date",
+            "title": "Session Date",
+            "type": "string"
+          },
+          "session_offset": {
+            "title": "Session Offset",
+            "type": "integer"
+          },
+          "value": {
+            "exclusiveMinimum": 0.0,
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "session_offset",
+          "session_date",
+          "value",
+          "log_value"
+        ],
+        "title": "RealizedPoint",
+        "type": "object"
+      },
+      "SectorPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "momentum_log_rs": {
+            "title": "Momentum Log Rs",
+            "type": "number"
+          },
+          "normalized_rs": {
+            "exclusiveMinimum": 0.0,
+            "title": "Normalized Rs",
+            "type": "number"
+          },
+          "quadrant": {
+            "enum": [
+              "leading",
+              "improving",
+              "weakening",
+              "lagging",
+              "neutral"
+            ],
+            "title": "Quadrant",
+            "type": "string"
+          },
+          "relative_change_percent": {
+            "title": "Relative Change Percent",
+            "type": "number"
+          },
+          "relative_strength": {
+            "exclusiveMinimum": 0.0,
+            "title": "Relative Strength",
+            "type": "number"
+          },
+          "session_date": {
+            "format": "date",
+            "title": "Session Date",
+            "type": "string"
+          },
+          "smoothed_normalized_rs": {
+            "exclusiveMinimum": 0.0,
+            "title": "Smoothed Normalized Rs",
+            "type": "number"
+          }
+        },
+        "required": [
+          "session_date",
+          "relative_strength",
+          "normalized_rs",
+          "smoothed_normalized_rs",
+          "momentum_log_rs",
+          "relative_change_percent",
+          "quadrant"
+        ],
+        "title": "SectorPoint",
+        "type": "object"
+      },
+      "SectorRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "lookback_sessions": {
+            "default": 126,
+            "maximum": 1260.0,
+            "minimum": 32.0,
+            "title": "Lookback Sessions",
+            "type": "integer"
+          },
+          "momentum_sessions": {
+            "default": 20,
+            "maximum": 126.0,
+            "minimum": 1.0,
+            "title": "Momentum Sessions",
+            "type": "integer"
+          },
+          "smoothing_sessions": {
+            "default": 5,
+            "maximum": 30.0,
+            "minimum": 1.0,
+            "title": "Smoothing Sessions",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "as_of"
+        ],
+        "title": "SectorRequest",
+        "type": "object"
+      },
+      "SectorResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "adjustment_basis": {
+            "const": "split_dividend_adjusted",
+            "default": "split_dividend_adjusted",
+            "title": "Adjustment Basis",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "currency": {
+            "const": "USD",
+            "default": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "data_kind": {
+            "enum": [
+              "synthetic",
+              "real"
+            ],
+            "title": "Data Kind",
+            "type": "string"
+          },
+          "data_versions": {
+            "patternProperties": {
+              "^[A-Z][A-Z0-9]{0,9}(?:[.-][A-Z0-9]{1,4})?$": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "propertyNames": {
+              "maxLength": 15
+            },
+            "title": "Data Versions",
+            "type": "object"
+          },
+          "ingestion_run_ids": {
+            "patternProperties": {
+              "^[A-Z][A-Z0-9]{0,9}(?:[.-][A-Z0-9]{1,4})?$": {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "propertyNames": {
+              "maxLength": 15
+            },
+            "title": "Ingestion Run Ids",
+            "type": "object"
+          },
+          "input_hash": {
+            "title": "Input Hash",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/SectorResult"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "sectors-v1",
+            "default": "sectors-v1",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "software": {
+            "$ref": "#/components/schemas/SoftwareIdentity"
+          }
+        },
+        "required": [
+          "run_id",
+          "created_at",
+          "provider",
+          "data_kind",
+          "input_hash",
+          "data_versions",
+          "ingestion_run_ids",
+          "software",
+          "result"
+        ],
+        "title": "SectorResponse",
+        "type": "object"
+      },
+      "SectorResult": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "benchmark": {
+            "const": "SPY",
+            "default": "SPY",
+            "title": "Benchmark",
+            "type": "string"
+          },
+          "boundary_policy": {
+            "const": "neutral_on_either_axis",
+            "default": "neutral_on_either_axis",
+            "title": "Boundary Policy",
+            "type": "string"
+          },
+          "boundary_tolerance_log": {
+            "default": 1e-12,
+            "title": "Boundary Tolerance Log",
+            "type": "number"
+          },
+          "config": {
+            "$ref": "#/components/schemas/SectorRequest"
+          },
+          "input_sample_count_per_symbol": {
+            "title": "Input Sample Count Per Symbol",
+            "type": "integer"
+          },
+          "input_start": {
+            "format": "date",
+            "title": "Input Start",
+            "type": "string"
+          },
+          "model_version": {
+            "const": "sector-relative-strength-v1",
+            "default": "sector-relative-strength-v1",
+            "title": "Model Version",
+            "type": "string"
+          },
+          "momentum_axis": {
+            "default": 0,
+            "title": "Momentum Axis",
+            "type": "number"
+          },
+          "momentum_unit": {
+            "const": "natural_log_relative_strength_change",
+            "default": "natural_log_relative_strength_change",
+            "title": "Momentum Unit",
+            "type": "string"
+          },
+          "normalization_session": {
+            "format": "date",
+            "title": "Normalization Session",
+            "type": "string"
+          },
+          "observation_kind": {
+            "const": "observed_relative_performance",
+            "default": "observed_relative_performance",
+            "title": "Observation Kind",
+            "type": "string"
+          },
+          "observed_through": {
+            "format": "date",
+            "title": "Observed Through",
+            "type": "string"
+          },
+          "period_unit": {
+            "const": "trading_sessions",
+            "default": "trading_sessions",
+            "title": "Period Unit",
+            "type": "string"
+          },
+          "raw_normalization": {
+            "const": "100_times_RS_over_reference_RS",
+            "default": "100_times_RS_over_reference_RS",
+            "title": "Raw Normalization",
+            "type": "string"
+          },
+          "sectors": {
+            "items": {
+              "$ref": "#/components/schemas/SectorSeries"
+            },
+            "title": "Sectors",
+            "type": "array"
+          },
+          "smoothed_normalization": {
+            "const": "100_times_exp_smoothed_log_RS_minus_reference",
+            "default": "100_times_exp_smoothed_log_RS_minus_reference",
+            "title": "Smoothed Normalization",
+            "type": "string"
+          },
+          "smoothing_method": {
+            "const": "trailing_mean_log_price_ratio",
+            "default": "trailing_mean_log_price_ratio",
+            "title": "Smoothing Method",
+            "type": "string"
+          },
+          "strength_axis": {
+            "default": 100,
+            "title": "Strength Axis",
+            "type": "number"
+          },
+          "warnings": {
+            "default": [
+              "descriptive_quadrants_not_predictions_or_investment_advice",
+              "recorded_adjusted_snapshots_not_point_in_time_guaranteed",
+              "normalization_reference_changes_with_lookback",
+              "strict_complete_matching_sessions_no_interpolation"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "as_of",
+          "observed_through",
+          "normalization_session",
+          "input_start",
+          "input_sample_count_per_symbol",
+          "config",
+          "sectors"
+        ],
+        "title": "SectorResult",
+        "type": "object"
+      },
+      "SectorSeries": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/SectorPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "ticker": {
+            "maxLength": 15,
+            "pattern": "^[A-Z][A-Z0-9]{0,9}(?:[.-][A-Z0-9]{1,4})?$",
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "name",
+          "points"
+        ],
+        "title": "SectorSeries",
+        "type": "object"
+      },
+      "SoftwareIdentity": {
+        "additionalProperties": false,
+        "properties": {
+          "code_sha256": {
+            "title": "Code Sha256",
+            "type": "string"
+          },
+          "git_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Git Revision"
+          },
+          "libraries": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Libraries",
+            "type": "object"
+          }
+        },
+        "required": [
+          "code_sha256",
+          "git_revision",
+          "libraries"
+        ],
+        "title": "SoftwareIdentity",
+        "type": "object"
+      },
+      "SpectrumPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "frequency": {
+            "title": "Frequency",
+            "type": "number"
+          },
+          "period_sessions": {
+            "title": "Period Sessions",
+            "type": "number"
+          },
+          "power": {
+            "minimum": 0.0,
+            "title": "Power",
+            "type": "number"
+          }
+        },
+        "required": [
+          "frequency",
+          "period_sessions",
+          "power"
+        ],
+        "title": "SpectrumPoint",
+        "type": "object"
+      },
+      "SpectrumResult": {
+        "additionalProperties": false,
+        "properties": {
+          "cycles": {
+            "items": {
+              "$ref": "#/components/schemas/CycleEstimate"
+            },
+            "title": "Cycles",
+            "type": "array"
+          },
+          "effective_max_period_sessions": {
+            "title": "Effective Max Period Sessions",
+            "type": "number"
+          },
+          "frequency_resolution": {
+            "title": "Frequency Resolution",
+            "type": "number"
+          },
+          "frequency_unit": {
+            "const": "cycles_per_trading_session",
+            "default": "cycles_per_trading_session",
+            "title": "Frequency Unit",
+            "type": "string"
+          },
+          "normalization": {
+            "const": "one_sided_psd_fs_1",
+            "default": "one_sided_psd_fs_1",
+            "title": "Normalization",
+            "type": "string"
+          },
+          "period_unit": {
+            "const": "trading_sessions",
+            "default": "trading_sessions",
+            "title": "Period Unit",
+            "type": "string"
+          },
+          "power_unit": {
+            "const": "input_units_squared_per_cycles_per_session",
+            "default": "input_units_squared_per_cycles_per_session",
+            "title": "Power Unit",
+            "type": "string"
+          },
+          "sample_count": {
+            "title": "Sample Count",
+            "type": "integer"
+          },
+          "spectrum": {
+            "items": {
+              "$ref": "#/components/schemas/SpectrumPoint"
+            },
+            "title": "Spectrum",
+            "type": "array"
+          },
+          "warnings": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "sample_count",
+          "frequency_resolution",
+          "effective_max_period_sessions",
+          "cycles",
+          "spectrum"
+        ],
+        "title": "SpectrumResult",
+        "type": "object"
+      },
+      "StoredBar": {
+        "additionalProperties": false,
+        "properties": {
+          "close": {
+            "title": "Close",
+            "type": "string"
+          },
+          "data_version": {
+            "title": "Data Version",
+            "type": "string"
+          },
+          "fetched_at": {
+            "format": "date-time",
+            "title": "Fetched At",
+            "type": "string"
+          },
+          "high": {
+            "title": "High",
+            "type": "string"
+          },
+          "ingested_at": {
+            "format": "date-time",
+            "title": "Ingested At",
+            "type": "string"
+          },
+          "ingestion_run_id": {
+            "format": "uuid",
+            "title": "Ingestion Run Id",
+            "type": "string"
+          },
+          "low": {
+            "title": "Low",
+            "type": "string"
+          },
+          "open": {
+            "title": "Open",
+            "type": "string"
+          },
+          "session_date": {
+            "format": "date",
+            "title": "Session Date",
+            "type": "string"
+          },
+          "snapshot_hash": {
+            "title": "Snapshot Hash",
+            "type": "string"
+          },
+          "symbol": {
+            "maxLength": 15,
+            "pattern": "^[A-Z][A-Z0-9]{0,9}(?:[.-][A-Z0-9]{1,4})?$",
+            "title": "Symbol",
+            "type": "string"
+          },
+          "volume": {
+            "maximum": 9.223372036854776e+18,
+            "minimum": 0.0,
+            "title": "Volume",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "symbol",
+          "session_date",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume",
+          "ingestion_run_id",
+          "ingested_at",
+          "data_version",
+          "fetched_at",
+          "snapshot_hash"
+        ],
+        "title": "StoredBar",
+        "type": "object"
+      },
+      "SymbolsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data_kind": {
+            "enum": [
+              "synthetic",
+              "real"
+            ],
+            "title": "Data Kind",
+            "type": "string"
+          },
+          "instruments": {
+            "items": {
+              "$ref": "#/components/schemas/Instrument"
+            },
+            "title": "Instruments",
+            "type": "array"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider",
+          "data_kind",
+          "instruments"
+        ],
+        "title": "SymbolsResponse",
+        "type": "object"
+      },
+      "TurningPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "peak",
+              "trough"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "session_date": {
+            "format": "date",
+            "title": "Session Date",
+            "type": "string"
+          },
+          "session_offset": {
+            "title": "Session Offset",
+            "type": "integer"
+          },
+          "window_end": {
+            "format": "date",
+            "title": "Window End",
+            "type": "string"
+          },
+          "window_end_offset": {
+            "title": "Window End Offset",
+            "type": "integer"
+          },
+          "window_method": {
+            "const": "heuristic_session_tolerance",
+            "default": "heuristic_session_tolerance",
+            "title": "Window Method",
+            "type": "string"
+          },
+          "window_start": {
+            "format": "date",
+            "title": "Window Start",
+            "type": "string"
+          },
+          "window_start_offset": {
+            "title": "Window Start Offset",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "session_offset",
+          "session_date",
+          "window_start_offset",
+          "window_end_offset",
+          "window_start",
+          "window_end"
+        ],
+        "title": "TurningPoint",
+        "type": "object"
+      },
+      "UncertaintyMethod": {
+        "additionalProperties": false,
+        "properties": {
+          "block_sessions": {
+            "title": "Block Sessions",
+            "type": "integer"
+          },
+          "bootstrap_draws": {
+            "title": "Bootstrap Draws",
+            "type": "integer"
+          },
+          "calibrated": {
+            "const": false,
+            "default": false,
+            "title": "Calibrated",
+            "type": "boolean"
+          },
+          "frequency_selection_uncertainty_included": {
+            "const": false,
+            "default": false,
+            "title": "Frequency Selection Uncertainty Included",
+            "type": "boolean"
+          },
+          "label": {
+            "const": "exploratory_uncalibrated_band",
+            "default": "exploratory_uncalibrated_band",
+            "title": "Label",
+            "type": "string"
+          },
+          "method": {
+            "default": "training_residual_change_block_bootstrap",
+            "enum": [
+              "training_residual_circular_block_bootstrap",
+              "training_residual_change_block_bootstrap"
+            ],
+            "title": "Method",
+            "type": "string"
+          },
+          "residual_quantile_mass": {
+            "title": "Residual Quantile Mass",
+            "type": "number"
+          },
+          "seed": {
+            "title": "Seed",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "residual_quantile_mass",
+          "bootstrap_draws",
+          "block_sessions",
+          "seed"
+        ],
+        "title": "UncertaintyMethod",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Data, FFT, exploratory harmonic forecasts and walk-forward evaluation. Sources and uncalibrated uncertainty are explicit.",
+    "title": "CycleScope",
+    "version": "0.4.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/analyses/{run_id}": {
+      "get": {
+        "operationId": "saved_analysis_api_v1_analyses__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Saved Analysis"
+      }
+    },
+    "/api/v1/backtests": {
+      "post": {
+        "operationId": "backtests_api_v1_backtests_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BacktestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Backtests"
+      }
+    },
+    "/api/v1/backtests/{run_id}": {
+      "get": {
+        "operationId": "saved_backtest_api_v1_backtests__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Saved Backtest"
+      }
+    },
+    "/api/v1/backtests/{run_id}/replay": {
+      "post": {
+        "operationId": "replay_api_v1_backtests__run_id__replay_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Replay"
+      }
+    },
+    "/api/v1/cycles/{ticker}": {
+      "get": {
+        "operationId": "cycles_api_v1_cycles__ticker__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "maxLength": 15,
+              "pattern": "^[A-Z][A-Z0-9]{0,9}(?:[.-][A-Z0-9]{1,4})?$",
+              "title": "Ticker",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "as_of",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "As Of",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lookback",
+            "required": false,
+            "schema": {
+              "default": 504,
+              "maximum": 2520,
+              "minimum": 32,
+              "title": "Lookback",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "input",
+            "required": false,
+            "schema": {
+              "default": "detrended_log_adjusted_close",
+              "enum": [
+                "detrended_log_adjusted_close",
+                "log_returns"
+              ],
+              "title": "Input",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "detrend",
+            "required": false,
+            "schema": {
+              "default": "linear",
+              "enum": [
+                "linear",
+                "constant"
+              ],
+              "title": "Detrend",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "window",
+            "required": false,
+            "schema": {
+              "default": "hann",
+              "enum": [
+                "hann",
+                "boxcar"
+              ],
+              "title": "Window",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "min_period_sessions",
+            "required": false,
+            "schema": {
+              "default": 4,
+              "maximum": 1260,
+              "minimum": 2,
+              "title": "Min Period Sessions",
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "max_period_sessions",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 1260,
+                  "minimum": 2,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Max Period Sessions"
+            }
+          },
+          {
+            "in": "query",
+            "name": "min_repetitions",
+            "required": false,
+            "schema": {
+              "default": 2,
+              "maximum": 10,
+              "minimum": 2,
+              "title": "Min Repetitions",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "prominence_ratio",
+            "required": false,
+            "schema": {
+              "default": 0.05,
+              "maximum": 1,
+              "minimum": 0,
+              "title": "Prominence Ratio",
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "peak_distance_bins",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Peak Distance Bins",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "max_peaks",
+            "required": false,
+            "schema": {
+              "default": 3,
+              "maximum": 5,
+              "minimum": 1,
+              "title": "Max Peaks",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Cycles"
+      }
+    },
+    "/api/v1/forecasts/{ticker}": {
+      "post": {
+        "operationId": "forecasts_api_v1_forecasts__ticker__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "maxLength": 15,
+              "pattern": "^[A-Z][A-Z0-9]{0,9}(?:[.-][A-Z0-9]{1,4})?$",
+              "title": "Ticker",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForecastRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Forecasts"
+      }
+    },
+    "/api/v1/prices/{ticker}": {
+      "get": {
+        "operationId": "prices_api_v1_prices__ticker__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "maxLength": 15,
+              "pattern": "^[A-Z][A-Z0-9]{0,9}(?:[.-][A-Z0-9]{1,4})?$",
+              "title": "Ticker",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "Start",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "End",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 500,
+              "maximum": 1000,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "maximum": 100000,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricesResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Prices"
+      }
+    },
+    "/api/v1/sectors/rotation": {
+      "get": {
+        "operationId": "sectors_api_v1_sectors_rotation_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "as_of",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "As Of",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lookback_sessions",
+            "required": false,
+            "schema": {
+              "default": 126,
+              "maximum": 1260,
+              "minimum": 32,
+              "title": "Lookback Sessions",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "momentum_sessions",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 126,
+              "minimum": 1,
+              "title": "Momentum Sessions",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "smoothing_sessions",
+            "required": false,
+            "schema": {
+              "default": 5,
+              "maximum": 30,
+              "minimum": 1,
+              "title": "Smoothing Sessions",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SectorResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Sectors"
+      }
+    },
+    "/api/v1/sectors/runs/{run_id}": {
+      "get": {
+        "operationId": "saved_api_v1_sectors_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SectorResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Saved"
+      }
+    },
+    "/api/v1/sectors/runs/{run_id}/replay": {
+      "post": {
+        "operationId": "replay_api_v1_sectors_runs__run_id__replay_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SectorResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Replay"
+      }
+    },
+    "/api/v1/symbols": {
+      "get": {
+        "operationId": "symbols_api_v1_symbols_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SymbolsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Symbols"
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/health/live": {
+      "get": {
+        "operationId": "live_health_live_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Live Health Live Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Live"
+      }
+    }
+  }
+}

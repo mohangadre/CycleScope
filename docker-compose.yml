@@ -1,0 +1,53 @@
+services:
+  db:
+    image: postgres:17.6-alpine@sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94
+    environment:
+      POSTGRES_USER: cyclescope
+      POSTGRES_PASSWORD: cyclescope
+      POSTGRES_DB: cyclescope
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cyclescope -d cyclescope"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg://cyclescope:cyclescope@db:5432/cyclescope
+      MARKET_DATA_PROVIDER: ${MARKET_DATA_PROVIDER:-synthetic}
+      APCA_API_KEY_ID: ${APCA_API_KEY_ID:-}
+      APCA_API_SECRET_KEY: ${APCA_API_SECRET_KEY:-}
+      ALPACA_FEED: ${ALPACA_FEED:-iex}
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/app/.venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    command: ["/app/.venv/bin/uvicorn", "cyclescope.api.app:create_app", "--factory", "--host", "0.0.0.0"]
+  web:
+    build: ./frontend
+    environment:
+      CYCLESCOPE_API_URL: http://api:8000
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/backend/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+volumes:
+  pgdata:
