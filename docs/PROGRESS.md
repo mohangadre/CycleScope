@@ -221,6 +221,17 @@ and matching final observed prices. This checks application behavior, not foreca
 accuracy. The four outputs of the full synthetic experiment also reproduced
 their recorded input hashes/numerical results exactly; new saved replay passed.
 
+## macOS Bash startup compatibility
+
+Reproduced the reported `local_alpaca.sh: line 87: syntax error near unexpected
+token '('` with official GNU Bash 3.2.57. The default-date expression nested a
+quoted Python heredoc/command substitution inside parameter expansion; it passed
+the development runner's Bash 5.2 parser but failed on the older shell. Split the
+optional end-date assignment and its fallback command into an explicit conditional.
+The startup scripts now parse under both Bash 3.2.57 and Bash 5.2, and a dedicated
+CI workflow checks those parsers without credentials or data downloads. This is a
+shell compatibility change; it does not alter prices or numerical models.
+
 Adding Python transport/coverage files changes package-wide source identity.
 Historical report retrieval is preserved; strict replay across that source change
 continues to reject incompatible identities. Current freshly computed reports

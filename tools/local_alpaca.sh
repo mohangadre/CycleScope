@@ -35,13 +35,16 @@ if not settings.apca_api_key_id or not settings.apca_api_secret_key:
 print(f'Selected real Alpaca feed: {settings.alpaca_feed}. No synthetic fallback.')
 PY
 docker compose run --rm api /app/.venv/bin/alembic upgrade head
-as_of=${CYCLESCOPE_INGEST_END:-$(docker compose run --rm -T api /app/.venv/bin/python - <<'PY'
+as_of=${CYCLESCOPE_INGEST_END:-}
+if [[ -z $as_of ]]; then
+  as_of=$(docker compose run --rm -T api /app/.venv/bin/python - <<'PY'
 from datetime import UTC, datetime
 from cyclescope.domain.calendar import completed_session_before_today
 # Conservatively exclude today's possibly incomplete daily bar, including after close.
 print(completed_session_before_today(datetime.now(UTC)).isoformat())
 PY
-)}
+)
+fi
 start=${CYCLESCOPE_INGEST_START:-2023-01-03}
 echo "Downloading all 12 instruments from Alpaca: $start through $as_of."
 if [[ $build_mode == cloud ]]; then

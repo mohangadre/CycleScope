@@ -68,6 +68,10 @@ appear on your Mac. Do not send key values in chat. Then run:
 bash tools/local_alpaca.sh
 ```
 
+The startup scripts support macOS's built-in Bash 3.2. If an older checkout
+reports a shell syntax error, run `git pull` before retrying; Bash 3.2 and current
+Bash syntax checks are included in CI.
+
 This builds the images, checks for local credentials, migrates, downloads all 12
 instruments from Alpaca, and verifies that the API serves real data from the chosen
 feed. It never seeds or falls back to synthetic prices. Default history starts

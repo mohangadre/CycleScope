@@ -1,0 +1,20 @@
+name: Startup shell compatibility
+on:
+  push:
+  pull_request:
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check current Bash
+        run: |
+          for script in tools/*.sh; do
+            bash -n "$script"
+          done
+      - name: Check Bash 3.2 compatibility for macOS
+        run: |
+          for script in tools/*.sh; do
+            docker run --rm -i bash:3.2.57@sha256:0fd7cb8499c63a3c9345e7088a9cd83bb69f6e895e83833859aff838a0312091 -n < "$script"
+          done
